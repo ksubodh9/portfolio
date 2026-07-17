@@ -1,0 +1,10 @@
+# Dependencies (build is dependency-free, but keep these out just in case)
+node_modules/
+npm-debug.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/

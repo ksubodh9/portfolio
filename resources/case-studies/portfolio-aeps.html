@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEPS + Emitra Integration — Portfolio | MaddoxPay</title>
+<style>
+/* ─── Reset & Tokens ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --dark:    #060b16;
+  --card:    #0c1526;
+  --card2:   #111e34;
+  --border:  rgba(255,255,255,0.07);
+  --text:    #dde6f0;
+  --muted:   #7a8fa8;
+  --blue:    #3b82f6;
+  --indigo:  #6366f1;
+  --violet:  #8b5cf6;
+  --sky:     #38bdf8;
+  --cyan:    #06b6d4;
+  --teal:    #14b8a6;
+  --green:   #10b981;
+  --amber:   #f59e0b;
+  --red:     #ef4444;
+  --rose:    #f43f5e;
+  --orange:  #f97316;
+  --r:       14px;
+  --sh:      0 12px 48px rgba(0,0,0,0.55);
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--dark); color: var(--text); line-height: 1.65; overflow-x: hidden; }
+a { color: var(--sky); text-decoration: none; }
+::selection { background: var(--indigo); color: #fff; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--dark); }
+::-webkit-scrollbar-thumb { background: var(--indigo); border-radius: 3px; }
+
+/* ─── NAV ────────────────────────────────────────────────────────────── */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: rgba(6,11,22,0.88); backdrop-filter: blur(18px); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+.nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 17px; }
+.nav-chip { background: linear-gradient(135deg, var(--indigo), var(--violet)); color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; }
+.nav-links { display: flex; gap: 24px; }
+.nav-links a { font-size: 13px; color: var(--muted); transition: color .2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--sky); }
+
+/* ─── PROGRESS ───────────────────────────────────────────────────────── */
+.prog-bar { position: fixed; top: 60px; left: 0; right: 0; height: 2px; z-index: 199; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--indigo), var(--violet), var(--sky)); width: 0; transition: width .1s; }
+
+/* ─── HERO ───────────────────────────────────────────────────────────── */
+.hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 24px 60px; position: relative; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(99,102,241,0.16) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 80% 25%, rgba(139,92,246,0.1) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 60% 85%, rgba(56,189,248,0.08) 0%, transparent 60%), var(--dark); }
+.hero-grid { position: absolute; inset: 0; opacity: .03; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 44px 44px; }
+.hero-inner { position: relative; z-index: 1; max-width: 940px; text-align: center; }
+.hero-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); color: var(--indigo); padding: 6px 18px; border-radius: 40px; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 28px; animation: fadeDown .6s ease both; }
+.hero-pill .dot { animation: blink 1.4s step-end infinite; }
+.hero-title { font-size: clamp(38px, 6.5vw, 78px); font-weight: 900; line-height: 1.07; letter-spacing: -2px; margin-bottom: 24px; animation: fadeUp .7s .1s ease both; }
+.hero-title .g1 { background: linear-gradient(135deg, var(--sky) 0%, var(--indigo) 50%, var(--violet) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-sub { font-size: 18px; color: var(--muted); max-width: 680px; margin: 0 auto 44px; animation: fadeUp .7s .2s ease both; line-height: 1.75; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 52px; animation: fadeUp .7s .3s ease both; }
+.htag { background: var(--card2); border: 1px solid var(--border); padding: 6px 16px; border-radius: 8px; font-size: 12px; color: var(--muted); transition: all .2s; }
+.htag:hover { border-color: var(--sky); color: var(--sky); }
+.hero-kpis { display: flex; gap: 52px; justify-content: center; flex-wrap: wrap; animation: fadeUp .7s .4s ease both; }
+.kpi-val { font-size: 42px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--sky), var(--indigo)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.kpi-lbl { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .6px; margin-top: 4px; }
+
+/* ─── COMPLEXITY BANNER ──────────────────────────────────────────────── */
+.complexity-banner { background: linear-gradient(135deg, #08102a 0%, #0d1a3a 50%, #08102a 100%); border-top: 1px solid rgba(99,102,241,.2); border-bottom: 1px solid rgba(99,102,241,.2); padding: 28px 24px; }
+.cb-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.cb-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--indigo); }
+.cb-items { display: flex; flex-wrap: wrap; gap: 10px; }
+.cb-item { background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.2); color: var(--sky); padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; font-family: monospace; }
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────────── */
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 88px 0; }
+.stag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--sky); margin-bottom: 14px; }
+.stitle { font-size: clamp(26px, 3vw, 42px); font-weight: 900; line-height: 1.2; margin-bottom: 16px; }
+.ssub { font-size: 16px; color: var(--muted); max-width: 640px; margin-bottom: 52px; }
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); max-width: 1120px; margin: 0 auto; }
+
+/* ─── STAT BAND ──────────────────────────────────────────────────────── */
+.stat-band { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 24px; }
+.stat-band-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; max-width: 1120px; margin: 0 auto; }
+.sbc { background: var(--card2); border: 1px solid var(--border); border-radius: var(--r); padding: 22px; text-align: center; transition: transform .2s, border-color .2s; }
+.sbc:hover { transform: translateY(-3px); border-color: var(--sky); }
+.sbc-val { font-size: 30px; font-weight: 900; background: linear-gradient(135deg, var(--sky), var(--indigo)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+.sbc-lbl { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+/* ─── FEATURE GRID ───────────────────────────────────────────────────── */
+.feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.fc { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 28px; position: relative; overflow: hidden; transition: transform .3s, border-color .3s, box-shadow .3s; }
+.fc::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(99,102,241,.04), transparent); opacity: 0; transition: opacity .3s; }
+.fc:hover { transform: translateY(-5px); border-color: rgba(56,189,248,.25); box-shadow: var(--sh); }
+.fc:hover::before { opacity: 1; }
+.fc-icon { width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--card2), #1a2545); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 18px; }
+.fc h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+.fc p  { font-size: 13px; color: var(--muted); line-height: 1.75; }
+
+/* ─── JOURNEY (horizontal stepper) ──────────────────────────────────── */
+.journey { display: flex; align-items: stretch; background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.jstep { flex: 1; padding: 24px 16px; text-align: center; border-right: 1px solid var(--border); position: relative; transition: background .2s; }
+.jstep:last-child { border-right: none; }
+.jstep:hover { background: var(--card2); }
+.jstep::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); color: var(--sky); font-size: 18px; font-weight: 700; z-index: 1; }
+.jstep:last-child::after { display: none; }
+.jnum { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--indigo), var(--violet)); color: #fff; font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; }
+.jstep h4 { font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+.jstep p  { font-size: 11px; color: var(--muted); }
+
+/* ─── DUAL MODE DIAGRAM ──────────────────────────────────────────────── */
+.dual-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.dm { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 28px; position: relative; overflow: hidden; }
+.dm.maddox-mode { border-top: 3px solid var(--blue); }
+.dm.emitra-mode  { border-top: 3px solid var(--violet); }
+.dm-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+.dm-badge span { font-size: 18px; }
+.dm h4 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+.dm ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.dm ul li { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+.dm ul li::before { content: '›'; color: var(--sky); font-weight: 900; flex-shrink: 0; font-size: 16px; line-height: 1.3; }
+
+/* ─── ARCH LAYERS ────────────────────────────────────────────────────── */
+.layers { display: flex; flex-direction: column; gap: 14px; }
+.layer { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 26px; display: flex; gap: 20px; align-items: flex-start; transition: border-color .2s; }
+.layer:hover { border-color: rgba(99,102,241,.3); }
+.lnum { width: 38px; height: 38px; border-radius: 9px; flex-shrink: 0; background: linear-gradient(135deg, #0d1635, var(--indigo)); border: 1px solid rgba(99,102,241,.4); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; }
+.layer h4 { font-size: 15px; font-weight: 700; margin-bottom: 7px; }
+.layer p  { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.lpills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.pill { background: var(--card2); border: 1px solid var(--border); font-size: 11px; font-family: monospace; color: var(--sky); padding: 3px 9px; border-radius: 4px; }
+
+/* ─── CODE WINDOW ────────────────────────────────────────────────────── */
+.cw { background: #060b16; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--sh); margin-bottom: 28px; }
+.cwbar { background: #0b1225; border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+.cwd { width: 12px; height: 12px; border-radius: 50%; }
+.cwd.r { background: #ef4444; }
+.cwd.y { background: #f59e0b; }
+.cwd.g { background: #22c55e; }
+.cwf { font-size: 12px; color: var(--muted); font-family: monospace; margin-left: 6px; }
+.cwb { padding: 22px; font-family: 'Consolas','Fira Code',monospace; font-size: 12.5px; overflow-x: auto; }
+.cwb pre { margin: 0; line-height: 1.85; }
+.kw  { color: #ff79c6; }
+.cl  { color: #8be9fd; }
+.fn  { color: #50fa7b; }
+.st  { color: #f1fa8c; }
+.cm  { color: #4a6080; font-style: italic; }
+.nu  { color: #bd93f9; }
+.va  { color: #f8f8f2; }
+.at  { color: #ffb86c; }
+.bool{ color: #ff9580; }
+code.ic { background: var(--card2); color: var(--sky); padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+
+/* ─── FLOW DIAGRAM ───────────────────────────────────────────────────── */
+.flow-col { display: flex; flex-direction: column; align-items: center; }
+.fnode { border-radius: 10px; padding: 10px 20px; font-size: 12px; font-weight: 700; text-align: center; min-width: 220px; max-width: 320px; width: 100%; }
+.fnode.start   { background: linear-gradient(135deg, #080f28, #182050); border: 1px solid var(--indigo); }
+.fnode.step    { background: var(--card2); border: 1px solid var(--border); }
+.fnode.api     { background: rgba(99,102,241,.1); border: 1px solid var(--indigo); }
+.fnode.success { background: rgba(16,185,129,.1); border: 1px solid var(--green); color: var(--green); }
+.fnode.warn    { background: rgba(239,68,68,.08); border: 1px solid var(--red); color: var(--red); }
+.fnode.otp     { background: rgba(245,158,11,.1); border: 1px solid var(--amber); color: var(--amber); }
+.fnode.biometric { background: rgba(56,189,248,.1); border: 1px solid var(--sky); color: var(--sky); }
+.farrow { width: 2px; height: 24px; background: linear-gradient(var(--indigo), var(--sky)); position: relative; }
+.farrow::after { content: ''; position: absolute; bottom: -6px; left: -5px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--sky); }
+.fbranch-row { display: flex; gap: 16px; width: 100%; }
+.fbranch { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 0; }
+.flabel { font-size: 10px; font-weight: 700; color: var(--muted); padding: 3px 9px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 8px; }
+
+/* ─── WALLET COMPARE ─────────────────────────────────────────────────── */
+.wallet-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.wc { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 24px; }
+.wc.debit  { border-left: 3px solid var(--red); }
+.wc.credit { border-left: 3px solid var(--green); }
+.wc h4 { font-size: 14px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.wc ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.wc ul li { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+.wc.debit ul li::before  { content: '↓'; color: var(--red); flex-shrink: 0; font-weight: 900; }
+.wc.credit ul li::before { content: '↑'; color: var(--green); flex-shrink: 0; font-weight: 900; }
+
+/* ─── CHALLENGE / SOLUTION ───────────────────────────────────────────── */
+.cs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.csc { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 28px; position: relative; overflow: hidden; }
+.csc.challenge::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--orange)); }
+.csc.solution::before  { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--indigo), var(--sky)); }
+.csc h4 { font-size: 15px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.csc ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.csc ul li { font-size: 13px; color: var(--muted); display: flex; gap: 10px; align-items: flex-start; line-height: 1.65; }
+.challenge li::before { content: '✗'; color: var(--red); font-weight: 900; flex-shrink: 0; }
+.solution  li::before { content: '✓'; color: var(--green); font-weight: 900; flex-shrink: 0; }
+
+/* ─── SECURITY GRID ──────────────────────────────────────────────────── */
+.sec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.sc { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 24px; text-align: center; transition: all .3s; position: relative; overflow: hidden; }
+.sc::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--sky); transition: width .3s; }
+.sc:hover::after { width: 80%; }
+.sc:hover { border-color: rgba(56,189,248,.2); transform: translateY(-2px); }
+.si { font-size: 30px; display: block; margin-bottom: 12px; }
+.sc h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.sc p  { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+/* ─── BADGE ──────────────────────────────────────────────────────────── */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.b-indigo { background: rgba(99,102,241,.12); color: #818cf8; border: 1px solid rgba(99,102,241,.25); }
+.b-sky    { background: rgba(56,189,248,.12); color: var(--sky); border: 1px solid rgba(56,189,248,.25); }
+.b-violet { background: rgba(139,92,246,.12); color: #c4b5fd; border: 1px solid rgba(139,92,246,.25); }
+.b-green  { background: rgba(16,185,129,.12); color: var(--green); border: 1px solid rgba(16,185,129,.25); }
+.b-amber  { background: rgba(245,158,11,.12); color: var(--amber); border: 1px solid rgba(245,158,11,.25); }
+.b-red    { background: rgba(239,68,68,.12); color: var(--red); border: 1px solid rgba(239,68,68,.25); }
+.b-cyan   { background: rgba(6,182,212,.12); color: var(--cyan); border: 1px solid rgba(6,182,212,.25); }
+
+/* ─── TECH GRID ──────────────────────────────────────────────────────── */
+.tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
+.tc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 12px; text-align: center; transition: border-color .2s, transform .2s; }
+.tc:hover { border-color: var(--indigo); transform: translateY(-2px); }
+.tc .ti { font-size: 26px; display: block; margin-bottom: 8px; }
+.tc .tn { font-size: 12px; font-weight: 700; }
+.tc .tr { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* ─── TIMELINE ───────────────────────────────────────────────────────── */
+.timeline { position: relative; padding-left: 38px; }
+.timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--indigo), var(--sky), var(--violet)); }
+.ti { position: relative; margin-bottom: 36px; }
+.tdot { position: absolute; left: -31px; top: 5px; width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, var(--indigo), var(--sky)); border: 2px solid var(--dark); }
+.tphase { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--sky); margin-bottom: 5px; }
+.ti h4 { font-size: 16px; font-weight: 700; margin-bottom: 7px; }
+.ti p  { font-size: 14px; color: var(--muted); }
+
+/* ─── STRIP ──────────────────────────────────────────────────────────── */
+.strip { background: linear-gradient(135deg, #03080f, #07102a, #03080f); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 64px 24px; }
+.strip-quote { font-size: clamp(19px, 2.5vw, 30px); font-weight: 700; line-height: 1.6; text-align: center; max-width: 860px; margin: 0 auto; }
+.hl { color: var(--sky); }
+.hv { color: var(--violet); }
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────── */
+.footer { background: var(--card); border-top: 1px solid var(--border); padding: 48px 24px; text-align: center; }
+.footer-logo { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+.footer-logo span { color: var(--sky); }
+.footer p { font-size: 13px; color: var(--muted); }
+.fl { display: flex; gap: 22px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.fl a { font-size: 13px; color: var(--muted); transition: color .2s; }
+.fl a:hover { color: var(--sky); }
+
+/* ─── KEYFRAMES ──────────────────────────────────────────────────────── */
+@keyframes fadeDown { from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp   { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+@keyframes blink    { 0%,100%{opacity:1}50%{opacity:0} }
+@keyframes pulse    { 0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,.4)}50%{box-shadow:0 0 0 14px rgba(99,102,241,0)} }
+@keyframes glow     { 0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)} }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media(max-width:920px){
+  .nav-links{display:none}
+  .stat-band-grid{grid-template-columns:repeat(2,1fr)}
+  .dual-mode,.cs-grid,.wallet-compare{grid-template-columns:1fr}
+  .journey{flex-direction:column}
+  .jstep{border-right:none;border-bottom:1px solid var(--border)}
+  .jstep::after{content:'↓';right:50%;top:auto;bottom:-14px;transform:translateX(50%)}
+  .jstep:last-child::after{display:none}
+}
+@media(max-width:580px){
+  .stat-band-grid{grid-template-columns:1fr}
+  .hero-kpis{gap:32px}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <span>MaddoxPay</span>
+    <span class="nav-chip">AEPS + eMitra</span>
+  </div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#onboarding">Onboarding</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#dual-mode">Dual Mode</a>
+    <a href="#transactions">Transactions</a>
+    <a href="#security">Security</a>
+    <a href="#stack">Stack</a>
+    <a href="#timeline">Timeline</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-pill"><span class="dot">●</span>&nbsp; Most Complex Feature · Live in Production</div>
+    <h1 class="hero-title">
+      <span class="g1">AEPS + eMitra</span><br>
+      Biometric Banking Integration
+    </h1>
+    <p class="hero-sub">
+      The most architecturally complex feature on MaddoxPay — a full biometric payment system
+      serving both regular Maddox agents and Rajasthan government eMitra kiosk operators,
+      with a dual wallet engine, three-tier commission structure, and AES-encrypted
+      government portal handshake.
+    </p>
+    <div class="hero-tags">
+      <span class="htag">Laravel 9</span>
+      <span class="htag">Fingpay AEPS Gateway</span>
+      <span class="htag">eMitra (Rajasthan Govt)</span>
+      <span class="htag">Biometric + RD Devices</span>
+      <span class="htag">AES Encryption</span>
+      <span class="htag">SSO Token Auth</span>
+      <span class="htag">Circuit Breaker Pattern</span>
+      <span class="htag">3-Tier Commissions</span>
+      <span class="htag">Dual Wallet Engine</span>
+      <span class="htag">3-Way Reconciliation</span>
+      <span class="htag">Bio-KYC + Bank eKYC</span>
+      <span class="htag">SHA256 Commission Audit</span>
+      <span class="htag">Repository Pattern</span>
+      <span class="htag">WhatsApp Notifications</span>
+    </div>
+    <div class="hero-kpis">
+      <div><div class="kpi-val">4</div><div class="kpi-lbl">Transaction Types</div></div>
+      <div><div class="kpi-val">2</div><div class="kpi-lbl">Gateways Integrated</div></div>
+      <div><div class="kpi-val">20+</div><div class="kpi-lbl">Injected Dependencies</div></div>
+      <div><div class="kpi-val">3</div><div class="kpi-lbl">Wallet Systems</div></div>
+      <div><div class="kpi-val">100%</div><div class="kpi-lbl">Custom Backend</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLEXITY BANNER -->
+<div class="complexity-banner">
+  <div class="cb-inner">
+    <div class="cb-label">Technologies in play simultaneously</div>
+    <div class="cb-items">
+      <span class="cb-item">AES-CBC Encryption</span>
+      <span class="cb-item">SSO Token Verification</span>
+      <span class="cb-item">Biometric XML PID</span>
+      <span class="cb-item">Circuit Breakers</span>
+      <span class="cb-item">SHA256 Audit Trail</span>
+      <span class="cb-item">MD5 Checksums</span>
+      <span class="cb-item">Haversine Geo-Distance</span>
+      <span class="cb-item">Dual Wallet Engine</span>
+      <span class="cb-item">3-Way Recon</span>
+      <span class="cb-item">FP097 eKYC Handler</span>
+    </div>
+  </div>
+</div>
+
+<!-- STAT BAND -->
+<div class="stat-band">
+  <div class="stat-band-grid">
+    <div class="sbc"><div class="sbc-val">CW/CD</div><div class="sbc-lbl">Cash Withdrawal &amp; Deposit (IMPS)</div></div>
+    <div class="sbc"><div class="sbc-val">MS/BE</div><div class="sbc-lbl">Mini Statement &amp; Balance Enquiry</div></div>
+    <div class="sbc"><div class="sbc-val">₹200–₹10K</div><div class="sbc-lbl">Per-transaction Range</div></div>
+    <div class="sbc"><div class="sbc-val">2-in-1</div><div class="sbc-lbl">Maddox + eMitra Users Same Code</div></div>
+    <div class="sbc"><div class="sbc-val">0</div><div class="sbc-lbl">Plain-text API Credentials</div></div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="wrap">
+<section class="section" id="overview">
+  <div class="stag">Project Overview</div>
+  <h2 class="stitle">What was built</h2>
+  <p class="ssub">A full-stack Aadhaar Enabled Payment System integration — enabling agents to perform biometric bank transactions for customers, with merchant onboarding, Bio-KYC, daily Two-Factor Authentication, and a parallel integration with Rajasthan's eMitra government portal for kiosk operators.</p>
+  <div class="feat-grid">
+    <div class="fc">
+      <div class="fc-icon">&#129318;</div>
+      <h3>Merchant Onboarding (Multi-step KYC)</h3>
+      <p>Agents register with Fingpay via a comprehensive KYC form — PAN, Aadhaar, shop address, bank settlement details, Pan image, masked Aadhaar image, and shop background photo — all assembled into a deeply nested API payload with S3 image uploads.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon">&#128070;</div>
+      <h3>Bio-KYC + Bank eKYC</h3>
+      <p>Two-stage KYC: biometric fingerprint capture for bio-KYC, followed by a separate bank eKYC process. A dedicated <code class="ic">FP097</code> response code triggers automatic redirect to eKYC page and sets <code class="ic">bank_ekyc_status = 'pending'</code>.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon">&#128273;</div>
+      <h3>Daily Two-Factor Authentication</h3>
+      <p>Agents complete a biometric 2FA every day before conducting transactions. 2FA status is verified by checking the transactions table for a same-day <code class="ic">master_two_factor_auth</code> success record. Geolocation (lat/long) is captured and stored at 2FA time.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon">&#128184;</div>
+      <h3>AEPS Transactions (CW, CD, MS, BE)</h3>
+      <p>Four transaction types with differing wallet mechanics: Cash Withdrawal/Balance Enquiry/Mini Statement use the credit wallet, Cash Deposit uses the debit wallet. Each transaction captures IIN number, Aadhaar, biometric PID, geolocation, and full commission breakdown.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon">&#127968;</div>
+      <h3>eMitra Portal Integration</h3>
+      <p>Rajasthan government kiosk operators land on MaddoxPay via AES-encrypted redirect from the eMitra portal. SSO token is verified, kiosk details fetched, and B2B transactions executed with MD5 checksums — plus full eMitra receipt and MIS report generation.</p>
+    </div>
+    <div class="fc">
+      <div class="fc-icon">&#128295;</div>
+      <h3>3-Way Reconciliation &amp; Circuit Breakers</h3>
+      <p>Three-way reconciliation against Fingpay confirms transaction final status. Circuit breakers on both eMitra B2B and verify endpoints prevent cascade failures. The haversine algorithm validates distance between transaction location and registered shop coordinates.</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="divider"></div>
+
+<!-- ONBOARDING JOURNEY -->
+<div style="background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px;" id="onboarding">
+  <div class="wrap">
+    <div class="stag">Merchant Onboarding Lifecycle</div>
+    <h2 class="stitle">From registration to first transaction</h2>
+    <p class="ssub">A multi-phase journey — each phase blocking the next until verified. Custom guards at every step prevent skipping ahead.</p>
+
+    <div style="margin-bottom:36px;">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;"><span class="badge b-indigo">Phase 1</span>&nbsp; Fingpay Merchant Registration</div>
+      <div class="journey">
+        <div class="jstep"><div class="jnum">1</div><h4>KYC Form</h4><p>Name, Aadhaar, PAN, address, shop details submitted</p></div>
+        <div class="jstep"><div class="jnum">2</div><h4>Document Upload</h4><p>Pan image, Aadhaar image, shop background photo → S3</p></div>
+        <div class="jstep"><div class="jnum">3</div><h4>API Payload</h4><p>Deeply nested Fingpay onboard request body assembled</p></div>
+        <div class="jstep"><div class="jnum">4</div><h4>Registered</h4><p>Fingpay returns merchant credentials; statusCode 10000</p></div>
+        <div class="jstep"><div class="jnum">5</div><h4>Local Record</h4><p>Onboard record saved with login ID, encrypted PIN, status</p></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:36px;">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;"><span class="badge b-violet">Phase 2</span>&nbsp; Bio-KYC &amp; Bank eKYC</div>
+      <div class="journey">
+        <div class="jstep"><div class="jnum">1</div><h4>eKYC OTP</h4><p>OTP sent to merchant mobile via Fingpay</p></div>
+        <div class="jstep"><div class="jnum">2</div><h4>OTP Verify</h4><p>Reference ID returned; stored for next step</p></div>
+        <div class="jstep"><div class="jnum">3</div><h4>Biometric Capture</h4><p>RD device captures fingerprint; XML PID data returned</p></div>
+        <div class="jstep"><div class="jnum">4</div><h4>Bio-KYC API</h4><p>PID submitted; bio_kyc_status = 'success'</p></div>
+        <div class="jstep"><div class="jnum">5</div><h4>Bank eKYC</h4><p>FP097 guard — bank eKYC completes separately; both required</p></div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;"><span class="badge b-sky">Phase 3</span>&nbsp; Daily Two-Factor Authentication</div>
+      <div class="journey">
+        <div class="jstep"><div class="jnum">1</div><h4>Browser Check</h4><p>Same-day 2FA status checked against transactions table</p></div>
+        <div class="jstep"><div class="jnum">2</div><h4>Biometric Capture</h4><p>Fingerprint captured via connected RD device</p></div>
+        <div class="jstep"><div class="jnum">3</div><h4>2FA API</h4><p>Fingpay verifies biometric; lat/long stored in twoFactorAuthentication record</p></div>
+        <div class="jstep"><div class="jnum">4</div><h4>Geolocation Locked</h4><p>Lat/long re-used for all transactions that day</p></div>
+        <div class="jstep"><div class="jnum">5</div><h4>Services Unlocked</h4><p>All 4 transaction types enabled for the day</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHITECTURE -->
+<div class="wrap">
+<section class="section" id="architecture">
+  <div class="stag">System Architecture</div>
+  <h2 class="stitle">How the system is structured</h2>
+  <p class="ssub">A deeply layered architecture spanning two gateways, two wallet systems, and a government portal — all behind one unified controller.</p>
+
+  <div class="layers">
+    <div class="layer">
+      <div class="lnum">1</div>
+      <div>
+        <h4>Controller — FingpayAepsServicesController (20+ injected dependencies)</h4>
+        <p>The most dependency-rich controller on the platform. Manages the complete lifecycle: onboarding gate checks (onboard status, KYC status, bank eKYC, 2FA), service product views, aadhar info lookup, transaction initiation, and post-transaction receipt generation. Detects Emitra vs. regular users and routes wallet and commission logic accordingly. Backend guards prevent Emitra users from transacting outside their active session type (<code class="ic">CW</code>/<code class="ic">CD</code>/<code class="ic">MS</code>/<code class="ic">BE</code> scoped per eMitra service ID).</p>
+        <div class="lpills">
+          <span class="pill">FingpayAepsServicesController.php</span>
+          <span class="pill">FingpayAepsResponseTrait.php</span>
+          <span class="pill">IsServiceSubscribed:30</span>
+          <span class="pill">EmitraController.php</span>
+          <span class="pill">EmitraServicesController.php</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="lnum">2</div>
+      <div>
+        <h4>Fingpay API Service — AepsApiService</h4>
+        <p>The Fingpay gateway client — 1600+ lines covering onboarding, OTP send/verify, Bio-KYC, KYC status check, Two-Factor Auth, four AEPS transaction types, transaction status, and three-way reconciliation. Biometric XML PID data is decrypted from the browser, parsed, and converted into Fingpay's required request format. Includes device serial number extraction, merchant PIN decryption, haversine geo-distance validation, and dynamic lat/long updates. UAT mode uses random test-case JSON files from <code class="ic">public/testcase/aeps/</code> with weighted randomization (boosted <code class="ic">10000.json</code> probability).</p>
+        <div class="lpills">
+          <span class="pill">AepsApiService.php</span>
+          <span class="pill">decryptBiometricData()</span>
+          <span class="pill">biometricResponseCollection()</span>
+          <span class="pill">threeWayReconApi()</span>
+          <span class="pill">haversineDistance()</span>
+          <span class="pill">updateLatLong()</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="lnum">3</div>
+      <div>
+        <h4>eMitra API Service — EmitraApis (AES + Circuit Breakers)</h4>
+        <p>The Rajasthan government eMitra gateway client. Incoming redirect data is AES-decrypted via <code class="ic">AesMethod::aesDecrypt()</code>. SSO tokens are verified against the eMitra SSO URL. Back-to-back (B2B) transactions and verification calls each have dedicated circuit breakers — if the endpoint trips, the circuit opens to prevent cascade failures. Checksums use MD5 of JSON-encoded credential arrays (including SSOTOKEN). Consumer keys are generated using SHA256 of <code class="ic">mt_rand() + microtime()</code>. Timestamps are formatted as <code class="ic">YmdHisv</code> (millisecond precision).</p>
+        <div class="lpills">
+          <span class="pill">EmitraApis.php</span>
+          <span class="pill">CircuitBreaker.php</span>
+          <span class="pill">ErrorCategorizer.php</span>
+          <span class="pill">AesMethod.php</span>
+          <span class="pill">backToBackTransaction()</span>
+          <span class="pill">verifyEmB2BTransaction()</span>
+          <span class="pill">cancelTransaction()</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="lnum">4</div>
+      <div>
+        <h4>Commission Engine — FingpayAepsCommissionService</h4>
+        <p>A tiered, model-resolved commission calculator with SHA256 audit checksums. Detects agent hierarchy by walking up the user parent tree — if an SM is found, <code class="ic">MasterFingPayAepsSuperDistributorCommission</code> is used; if only RM exists, <code class="ic">MasterFingPayAepsDistributorCommission</code>; otherwise base <code class="ic">MasterFingPayAepsCommission</code>. Commission slabs matched by <code class="ic">min_range / max_range</code> with amount. Mini Statement returns a fixed ₹1 split; Balance Enquiry returns zero commission. For Emitra users, <code class="ic">MdxCommCalculatorHelper::emitraServiceCommissionDetails()</code> is called instead.</p>
+        <div class="lpills">
+          <span class="pill">FingpayAepsCommissionService.php</span>
+          <span class="pill">detectHierarchy()</span>
+          <span class="pill">resolveCommissionModel()</span>
+          <span class="pill">buildCommissionResponse()</span>
+          <span class="pill">MdxCommCalculatorHelper (Emitra)</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="lnum">5</div>
+      <div>
+        <h4>Emitra Wallet Service — EmitraTransactionService (dual wallet orchestration)</h4>
+        <p>Orchestrates wallet operations for eMitra users. Debit transactions (Cash Deposit) go to the main wallet via <code class="ic">initiateDebitTransaction()</code>. Credit transactions (CW/MS/BE) go to the credit wallet via <code class="ic">initiateCreditTransaction()</code> — which includes special MS service ID resolution logic: Mini Statement sessions offered under the CW eMitra service ID are re-resolved to the dedicated MS service ID, with a graceful fallback clone. Post-transaction, it calls back to eMitra's B2B API and verify endpoint to settle the transaction in the government system. Also supports force-cancel with eMitra API call bypass.</p>
+        <div class="lpills">
+          <span class="pill">EmitraTransactionService.php</span>
+          <span class="pill">initiateDebitTransaction()</span>
+          <span class="pill">initiateCreditTransaction()</span>
+          <span class="pill">processEmitraTransaction()</span>
+          <span class="pill">cancelEmitraTransaction()</span>
+          <span class="pill">syncAepsEmitraBaseWalletStatus()</span>
+          <span class="pill">resolveBaseWalletTransaction()</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="lnum">6</div>
+      <div>
+        <h4>Repository Layer (7+ interfaces) + Database Design</h4>
+        <p>All data access behind interfaces. <code class="ic">FingpayAepsTransactions</code> table stores transaction metadata with dual wallet resolution (CD uses transactions table, others use credit_wallet_transactions). The model exposes a computed <code class="ic">resolved_transaction</code> accessor that automatically returns the right wallet record based on <code class="ic">txn_type</code>. eMitra has its own <code class="ic">emitra_order_transactions</code> table tracking SSO IDs, kiosk codes, eMitra service IDs, revenue heads, and wallet types with a polymorphic <code class="ic">transactions()</code> morphTo relation.</p>
+        <div class="lpills">
+          <span class="pill">fingpay_aeps_transactions</span>
+          <span class="pill">fingpay_aeps_onboard</span>
+          <span class="pill">fingpay_aeps_kyc</span>
+          <span class="pill">fingpay_aeps_two_fa</span>
+          <span class="pill">emitra_order_transactions</span>
+          <span class="pill">emitra_kiosk_requests</span>
+          <span class="pill">mdx_emitra_services</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- QUOTE STRIP -->
+<div class="strip">
+  <div class="strip-quote">
+    "Built the most complex feature on MaddoxPay — a <span class="hl">biometric Aadhaar payment system</span>
+    serving two completely different user types (regular agents &amp; <span class="hv">Rajasthan government kiosk operators</span>)
+    from a single codebase, with dual wallets, two gateways,
+    encrypted government handshakes, and a circuit-broken B2B API pipeline."
+  </div>
+</div>
+
+<!-- DUAL USER MODE -->
+<div style="background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px;" id="dual-mode">
+  <div class="wrap">
+    <div class="stag">Dual User Mode</div>
+    <h2 class="stitle">One codebase, two completely different flows</h2>
+    <p class="ssub">The same controller detects whether the logged-in user is a Maddox agent or an eMitra kiosk operator and branches the entire wallet, commission, and API logic accordingly.</p>
+    <div class="dual-mode">
+      <div class="dm maddox-mode">
+        <div class="dm-badge" style="color:var(--blue)"><span>&#128100;</span> Maddox Agent Mode</div>
+        <h4>Regular agent on MaddoxPay</h4>
+        <ul>
+          <li>Commission calculated by <code class="ic">FingpayAepsCommissionService</code> using slab-based hierarchy detection</li>
+          <li>CW/MS/BE → Credit Wallet via <code class="ic">CreditWalletService</code></li>
+          <li>CD → Debit Wallet via <code class="ic">DebitWalletService</code></li>
+          <li>WhatsApp notification sent after transaction via <code class="ic">WhatsAppService</code></li>
+          <li>Full AEPS product view with transaction history, DataTables, and receipt</li>
+          <li>No eMitra service ID scoping — can use all 4 transaction types freely</li>
+        </ul>
+      </div>
+      <div class="dm emitra-mode">
+        <div class="dm-badge" style="color:#c4b5fd"><span>&#127968;</span> eMitra Kiosk Operator Mode</div>
+        <h4>Government kiosk agent (Rajasthan eMitra)</h4>
+        <ul>
+          <li>Redirected from eMitra portal with AES-encrypted payload; SSO token verified</li>
+          <li>Commission calculated by <code class="ic">MdxCommCalculatorHelper::emitraServiceCommissionDetails()</code></li>
+          <li>Wallet via <code class="ic">EmitraTransactionService</code> — which also triggers eMitra B2B API</li>
+          <li>Transaction type restricted to active eMitra session service ID (backend guard)</li>
+          <li>MS allowed under CW eMitra session with re-resolved service ID</li>
+          <li>Transaction confirmed by eMitra verify endpoint; receipt printed via eMitra receipt URL</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Emitra entry flow -->
+    <div style="margin-top:48px;">
+      <div class="stag" style="margin-bottom:14px;">eMitra Entry Flow</div>
+      <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;justify-content:center;">
+        <div class="flow-col" style="max-width:320px;">
+          <div class="fnode start">&#127968; eMitra Portal (Rajasthan Govt)</div>
+          <div class="farrow"></div>
+          <div class="fnode api">POST /emitra/redirect/{service}</div>
+          <div class="farrow"></div>
+          <div class="fnode step">AES decrypt <code class="ic">encData</code> → SERVICEID, KIOSK</div>
+          <div class="farrow"></div>
+          <div class="fnode otp">SSO token verified at eMitra SSO URL</div>
+          <div class="farrow"></div>
+          <div class="fnode step">Kiosk details fetched; user session populated</div>
+          <div class="farrow"></div>
+          <div class="fnode step">EmitraServicesController routes by service_id</div>
+          <div class="farrow"></div>
+          <div class="fbranch-row">
+            <div class="fbranch">
+              <div class="flabel">aeps_onboarding</div>
+              <div class="fnode step" style="font-size:11px;">Subscribe user to service 30 → Onboard form</div>
+            </div>
+            <div class="fbranch">
+              <div class="flabel">aeps_cw</div>
+              <div class="fnode step" style="font-size:11px;">→ Service Products page (CW/MS/BE)</div>
+            </div>
+          </div>
+        </div>
+        <div class="flow-col" style="max-width:320px;">
+          <div class="fnode start">&#128100; Agent selects CW transaction</div>
+          <div class="farrow"></div>
+          <div class="fnode step">Backend: is_emitra_user + session service_id validated</div>
+          <div class="farrow"></div>
+          <div class="fnode biometric">Biometric PID captured from RD device</div>
+          <div class="farrow"></div>
+          <div class="fnode step">EmitraTransactionService creates credit wallet record + eMitra order</div>
+          <div class="farrow"></div>
+          <div class="fnode api">Fingpay AEPS API call (Cash Withdrawal)</div>
+          <div class="farrow"></div>
+          <div class="fnode api">eMitra B2B Transaction API (revenue head + checksum)</div>
+          <div class="farrow"></div>
+          <div class="fnode api">eMitra Verify Transaction API</div>
+          <div class="farrow"></div>
+          <div class="fnode success">&#10003; Emitra receipt generated; MIS updated</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSACTION MECHANICS -->
+<div class="wrap">
+<section class="section" id="transactions">
+  <div class="stag">Transaction Mechanics</div>
+  <h2 class="stitle">Dual wallet engine — type-resolved at runtime</h2>
+  <p class="ssub">A single <code class="ic">initiateTransaction()</code> method branches into completely different wallet flows depending on transaction type — solved by a type-to-config map resolved at runtime.</p>
+
+  <!-- Wallet comparison -->
+  <div class="wallet-compare" style="margin-bottom:44px;">
+    <div class="wc debit">
+      <h4><span style="color:var(--red);">&#128993;</span> Debit Wallet (Main Wallet)</h4>
+      <ul>
+        <li>Used for <strong>Cash Deposit (CD)</strong> only — agent funds the deposit</li>
+        <li>Calls <code class="ic">DebitWalletService::initiateOrderTransaction()</code></li>
+        <li>Emitra: calls <code class="ic">EmitraTransactionService::initiateDebitTransaction()</code></li>
+        <li>Exception types: <code class="ic">InsufficientDebitWalletBalanceException</code>, <code class="ic">NegativeBalanceException</code></li>
+        <li>All wrapped in <code class="ic">DB::beginTransaction()</code> for atomicity</li>
+      </ul>
+    </div>
+    <div class="wc credit">
+      <h4><span style="color:var(--green);">&#129001;</span> Credit Wallet</h4>
+      <ul>
+        <li>Used for <strong>CW, MS, BE</strong> — agent's credit balance is used</li>
+        <li>Calls <code class="ic">CreditWalletService::initiateOrderTransaction()</code></li>
+        <li>Emitra: <code class="ic">EmitraTransactionService::initiateCreditTransaction()</code></li>
+        <li>Commission flag: <code class="ic">isCommission = ($type !== 'BE')</code> — BE has zero commission</li>
+        <li>Credit balance checked via <code class="ic">walletRepository::getMyCreditBalance()</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Code: commission duality -->
+  <div style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span class="badge b-indigo">Commission Branching</span>
+    <span style="font-size:13px;color:var(--muted);">Emitra users use government commission calculator; Maddox users use hierarchy-based engine</span>
+  </div>
+  <div class="cw">
+    <div class="cwbar"><div class="cwd r"></div><div class="cwd y"></div><div class="cwd g"></div><span class="cwf">FingpayAepsServicesController.php — commission resolution</span></div>
+    <div class="cwb"><pre>
+<span class="cm">// Transaction type → transaction code + amount mapping</span>
+<span class="va">$map</span> = [
+    <span class="st">'CW'</span> => [<span class="st">'code'</span> => <span class="st">'aeps_cw_transaction'</span>, <span class="st">'amount'</span> => (<span class="cl">int</span>)<span class="va">$request</span>->amount],
+    <span class="st">'CD'</span> => [<span class="st">'code'</span> => <span class="st">'aeps_cd_transaction'</span>, <span class="st">'amount'</span> => (<span class="cl">int</span>)<span class="va">$request</span>->amount],
+    <span class="st">'BE'</span> => [<span class="st">'code'</span> => <span class="st">'aeps_be_transaction'</span>, <span class="st">'amount'</span> => <span class="nu">0</span>],
+    <span class="st">'MS'</span> => [<span class="st">'code'</span> => <span class="st">'aeps_ms_transaction'</span>, <span class="st">'amount'</span> => <span class="nu">0</span>],
+];
+
+<span class="cm">// Branch: eMitra users → government commission calculator
+//         Maddox users → slab-based hierarchy commission engine</span>
+<span class="va">$orderDetails</span> = !<span class="fn">empty</span>(<span class="va">$user</span>->is_emitra_user)
+    ? <span class="cl">MdxCommCalculatorHelper</span>::<span class="fn">emitraServiceCommissionDetails</span>(
+        <span class="va">$this</span>->service_id, <span class="va">$cfg</span>[<span class="st">'code'</span>], <span class="va">$cfg</span>[<span class="st">'amount'</span>]
+    )
+    : <span class="va">$this</span>->fingpayAepsCommissionService-><span class="fn">calculate</span>(
+        <span class="va">$this</span>->service_id,
+        <span class="va">$user</span>,
+        <span class="va">$cfg</span>[<span class="st">'code'</span>],
+        <span class="va">$cfg</span>[<span class="st">'amount'</span>]
+    );
+
+<span class="kw">if</span> (!<span class="va">$orderDetails</span> || !<span class="fn">isset</span>(<span class="va">$orderDetails</span>[<span class="st">'commissionData'</span>])) {
+    <span class="va">DB</span>::<span class="fn">rollBack</span>();
+    <span class="kw">return</span> <span class="fn">response</span>()-><span class="fn">json</span>([<span class="st">'success'</span> => <span class="bool">false</span>, <span class="st">'message'</span> => <span class="st">'Commission calculation failed.'</span>], <span class="nu">500</span>);
+}</pre></div>
+  </div>
+
+  <!-- Code: commission slab model resolution -->
+  <div style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span class="badge b-violet">Commission Slab Engine</span>
+    <span style="font-size:13px;color:var(--muted);">3-tier model selection + SHA256 input/output checksums for audit trail</span>
+  </div>
+  <div class="cw">
+    <div class="cwbar"><div class="cwd r"></div><div class="cwd y"></div><div class="cwd g"></div><span class="cwf">FingpayAepsCommissionService.php — calculate() + checksum</span></div>
+    <div class="cwb"><pre>
+<span class="cm">// Detect hierarchy by walking up the user parent tree</span>
+[<span class="va">$hasSM</span>, <span class="va">$hasRM</span>] = <span class="va">$this</span>-><span class="fn">detectHierarchy</span>(<span class="va">$user</span>);
+
+<span class="cm">// Resolve the correct commission model by hierarchy presence</span>
+<span class="va">$model</span> = <span class="va">$this</span>-><span class="fn">resolveCommissionModel</span>(<span class="va">$hasSM</span>, <span class="va">$hasRM</span>);
+<span class="cm">// → MasterFingPayAepsSuperDistributorCommission  (SM + RM present)
+// → MasterFingPayAepsDistributorCommission        (RM only)
+// → MasterFingPayAepsCommission                   (standalone agent)</span>
+
+<span class="va">$slab</span> = <span class="va">$model</span>::<span class="fn">where</span>(<span class="st">'min_range'</span>, <span class="st">'<='</span>, <span class="va">$amount</span>)
+    -><span class="fn">where</span>(<span class="st">'max_range'</span>, <span class="st">'>='</span>, <span class="va">$amount</span>)
+    -><span class="fn">first</span>();
+
+<span class="va">$response</span> = <span class="va">$this</span>-><span class="fn">buildCommissionResponse</span>(<span class="va">$slab</span>, <span class="va">$amount</span>, <span class="va">$hasSM</span>, <span class="va">$hasRM</span>, <span class="va">$transType</span>);
+
+<span class="cm">// SHA256 checksum on both input and output for tamper-proof audit logging</span>
+<span class="va">$inputChecksum</span>    = <span class="fn">hash</span>(<span class="st">'sha256'</span>, <span class="fn">json_encode</span>(<span class="va">$inputData</span>));
+<span class="va">$outputChecksum</span>   = <span class="fn">hash</span>(<span class="st">'sha256'</span>, <span class="fn">json_encode</span>(<span class="va">$response</span>));
+<span class="va">$combinedChecksum</span> = <span class="fn">hash</span>(<span class="st">'sha256'</span>, <span class="va">$inputChecksum</span> . <span class="va">$outputChecksum</span>);
+
+<span class="cl">Log</span>::<span class="fn">channel</span>(<span class="st">'aeps_commission_new_slab'</span>)-><span class="fn">info</span>(<span class="st">'AEPS Commission Calculated'</span>, [
+    <span class="st">'input'</span>     => <span class="va">$inputData</span>,
+    <span class="st">'output'</span>    => <span class="va">$response</span>,
+    <span class="st">'checksums'</span> => [
+        <span class="st">'input_checksum'</span>    => <span class="va">$inputChecksum</span>,
+        <span class="st">'output_checksum'</span>   => <span class="va">$outputChecksum</span>,
+        <span class="st">'combined_checksum'</span> => <span class="va">$combinedChecksum</span>,
+    ],
+    <span class="st">'execution_time_ms'</span> => <span class="fn">round</span>((<span class="fn">microtime</span>(<span class="bool">true</span>) - <span class="va">$start</span>) * <span class="nu">1000</span>, <span class="nu">2</span>)
+]);</pre></div>
+  </div>
+
+  <!-- Code: eMitra MS service resolution -->
+  <div style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span class="badge b-amber">eMitra MS Service Resolution</span>
+    <span style="font-size:13px;color:var(--muted);">Mini Statement is offered under the CW session — service ID must be re-resolved at runtime</span>
+  </div>
+  <div class="cw">
+    <div class="cwbar"><div class="cwd r"></div><div class="cwd y"></div><div class="cwd g"></div><span class="cwf">EmitraTransactionService.php — initiateCreditTransaction() — MS re-resolution</span></div>
+    <div class="cwb"><pre>
+<span class="cm">// MS is offered under the CW session, so always resolve it by the configured MS service ID.
+// This is a key nuance: the kiosk_request.service_id will be the CW eMitra service,
+// but the transaction must be logged against the MS eMitra service.</span>
+<span class="va">$resolvedServiceId</span> = <span class="va">$type</span> === <span class="st">'MS'</span>
+    ? <span class="fn">config</span>(<span class="st">'services.emitra.services.aeps_ms'</span>)
+    : <span class="va">$baseService</span>->em_service_id;
+
+<span class="va">$serviceDetail</span> = <span class="va">$this</span>->emitraServiceRepository
+    -><span class="fn">getServiceByEmitraServiceId</span>(<span class="va">$resolvedServiceId</span>);
+
+<span class="cm">// Graceful fallback: if MS service record is not found (env mismatch),
+// clone the CW base service but override the em_service_id so the eMitra API
+// receives the correct MS service ID.</span>
+<span class="kw">if</span> (!<span class="va">$serviceDetail</span> && <span class="va">$type</span> === <span class="st">'MS'</span> && <span class="va">$baseService</span>) {
+    <span class="va">$serviceDetail</span> = <span class="fn">clone</span> <span class="va">$baseService</span>;
+    <span class="va">$serviceDetail</span>->em_service_id = <span class="va">$resolvedServiceId</span>;
+    <span class="va">$serviceDetail</span>->paymode = <span class="bool">null</span>;
+}</pre></div>
+  </div>
+
+  <!-- Code: Emitra backend transaction guard -->
+  <div style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span class="badge b-red">eMitra Session Guard</span>
+    <span style="font-size:13px;color:var(--muted);">Prevents Emitra users from initiating transactions outside their active government session type</span>
+  </div>
+  <div class="cw">
+    <div class="cwbar"><div class="cwd r"></div><div class="cwd y"></div><div class="cwd g"></div><span class="cwf">FingpayAepsServicesController.php — eMitra backend session guard</span></div>
+    <div class="cwb"><pre>
+<span class="cm">// BACKEND GUARD: Prevent unauthorized service types for Emitra users.
+// Even if the frontend allows a type, the backend validates against the
+// active Emitra session's em_service_id — a server-side enforcement.</span>
+<span class="kw">if</span> (!<span class="fn">empty</span>(<span class="va">$user</span>->is_emitra_user)) {
+    <span class="va">$serviceInfo</span> = <span class="fn">app</span>(<span class="st">'GlobalEmitraServiceInfo'</span>);
+    <span class="va">$allowed</span> = <span class="bool">false</span>;
+
+    <span class="kw">if</span> (<span class="va">$type</span> === <span class="st">'MS'</span> && <span class="va">$serviceInfo</span> && (
+        <span class="va">$serviceInfo</span>->em_service_id == <span class="fn">config</span>(<span class="st">'services.emitra.services.aeps_ms'</span>) ||
+        <span class="va">$serviceInfo</span>->em_service_id == <span class="fn">config</span>(<span class="st">'services.emitra.services.aeps_cw'</span>)  <span class="cm">// MS under CW session</span>
+    )) {
+        <span class="va">$allowed</span> = <span class="bool">true</span>;
+    }
+
+    <span class="cm">// ... similar checks for CW, CD, BE ...</span>
+
+    <span class="kw">if</span> (!<span class="va">$allowed</span>) {
+        <span class="kw">return</span> <span class="fn">response</span>()-><span class="fn">json</span>([
+            <span class="st">'success'</span>  => <span class="bool">false</span>,
+            <span class="st">'message'</span>  => <span class="st">'Unauthorized transaction type for your current eMitra session.'</span>,
+        ], <span class="nu">403</span>);
+    }
+}</pre></div>
+  </div>
+</section>
+</div>
+
+<div class="divider"></div>
+
+<!-- CHALLENGES & SOLUTIONS -->
+<div class="wrap">
+<section class="section">
+  <div class="stag">Engineering Decisions</div>
+  <h2 class="stitle">Hardest problems &amp; how they were solved</h2>
+  <div class="cs-grid">
+    <div class="csc challenge">
+      <h4><span>&#9888;&#65039;</span> The Hard Problems</h4>
+      <ul>
+        <li>Two completely different user types (Maddox agents vs eMitra kiosk operators) using the same controller — requiring branched wallet, commission, and API logic throughout</li>
+        <li>Mini Statement sessions are offered under the eMitra CW service ID — the transaction must still be logged against the MS service ID or eMitra settlement fails</li>
+        <li>Biometric XML PID data arrives from the browser already encrypted (from the RD device) and must be decrypted, parsed, and re-formatted before any API call</li>
+        <li>FP097 bank eKYC response can arrive during any Fingpay API call — needed a centralized handler usable from any controller or service</li>
+        <li>Cash Deposit uses debit wallet; all other AEPS types use credit wallet — must be determined at runtime and the correct exception types handled per path</li>
+        <li>eMitra B2B and verify API calls can fail silently or time out — without circuit breakers, every Fingpay transaction would hang waiting for the government API</li>
+        <li>Commission correctness is critical — a wrong split would silently under/over-pay agents. No native audit trail for commission calculations existed.</li>
+      </ul>
+    </div>
+    <div class="csc solution">
+      <h4><span>&#9989;</span> Solutions Implemented</h4>
+      <ul>
+        <li>Built a clean runtime branch: <code class="ic">$user->is_emitra_user</code> flag checked at every decision point — commission, wallet type, service info, view routing — keeping both paths in one controller</li>
+        <li>Implemented MS service ID re-resolution in <code class="ic">EmitraTransactionService</code> with a graceful clone fallback when the MS service record is missing in a non-production environment</li>
+        <li>Built <code class="ic">decryptBiometricData()</code> → <code class="ic">biometricResponseCollection()</code> pipeline: decrypt PID → extract XML fields → map to Fingpay's exact key names — all before the API call</li>
+        <li>Extracted FP097 logic into <code class="ic">FingpayAepsResponseTrait</code> — a reusable trait that updates eKYC status and returns the correct redirect for AJAX and non-AJAX requests</li>
+        <li>Transaction type → wallet config map: <code class="ic">['CW'=>'credit', 'CD'=>'debit', 'BE'=>'credit', 'MS'=>'credit']</code> resolved before <code class="ic">DB::beginTransaction()</code> — correct exception type caught per branch</li>
+        <li>Dedicated <code class="ic">CircuitBreaker</code> instances per endpoint (<code class="ic">emitra_b2b_transaction</code>, <code class="ic">emitra_verify_transaction</code>) — trips open after repeated failures, preventing AEPS transactions from blocking on a government API timeout</li>
+        <li>SHA256 checksums on both commission input and output (plus a combined hash) written to a dedicated <code class="ic">aeps_commission_new_slab</code> log channel for every transaction — tamper-proof audit trail</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- SECURITY -->
+<div style="background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px;" id="security">
+  <div class="wrap">
+    <div class="stag">Security</div>
+    <h2 class="stitle">Security measures at every layer</h2>
+    <div class="sec-grid">
+      <div class="sc"><span class="si">&#128272;</span><h4>AES Encrypted Redirect</h4><p>eMitra portal sends session data as AES-encrypted <code class="ic">encData</code>. Decrypted server-side via <code class="ic">AesMethod::aesDecrypt()</code> — plaintext never visible in transit.</p></div>
+      <div class="sc"><span class="si">&#128203;</span><h4>SSO Token Verification</h4><p>Every eMitra session verifies the SSO token against the eMitra SSO endpoint before any kiosk action is allowed — invalid or expired tokens are rejected.</p></div>
+      <div class="sc"><span class="si">&#129318;</span><h4>Biometric PID Encryption</h4><p>RD devices return encrypted XML PID data. The server decrypts and validates PID before forwarding to Fingpay — raw biometric data never stored.</p></div>
+      <div class="sc"><span class="si">&#128273;</span><h4>eMitra Session Guard</h4><p>Backend checks <code class="ic">is_emitra_user</code> + active <code class="ic">em_service_id</code> to enforce transaction type restrictions — frontend cannot bypass with a direct POST.</p></div>
+      <div class="sc"><span class="si">&#9989;</span><h4>MD5 Checksums (eMitra)</h4><p>eMitra B2B and verify transactions include MD5 checksums of credential arrays including SSOTOKEN — tampers with request payload would invalidate the checksum.</p></div>
+      <div class="sc"><span class="si">&#128260;</span><h4>SHA256 Commission Audit</h4><p>Every commission calculation writes input/output/combined SHA256 checksums to a dedicated log — provides tamper-evident record of all commission decisions.</p></div>
+      <div class="sc"><span class="si">&#128450;</span><h4>Atomic Wallet Operations</h4><p>All wallet debits/credits run inside <code class="ic">DB::beginTransaction()</code> — commission calculation, wallet record creation, and AEPS transaction record are all-or-nothing.</p></div>
+      <div class="sc"><span class="si">&#9887;&#65039;</span><h4>Circuit Breakers</h4><p>Two circuit breakers prevent the Fingpay AEPS flow from blocking on eMitra government API failures — trips after threshold failures, logs error category via <code class="ic">ErrorCategorizer</code>.</p></div>
+      <div class="sc"><span class="si">&#128205;</span><h4>Geolocation Validation</h4><p>Transaction lat/long is captured at 2FA time and reused per-transaction. Haversine distance calculation detects impossible location jumps between 2FA and transaction.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<div class="wrap">
+<section class="section" id="stack">
+  <div class="stag">Technology Stack</div>
+  <h2 class="stitle">Everything under the hood</h2>
+  <div class="tech-grid">
+    <div class="tc"><span class="ti">&#128039;</span><div class="tn">PHP 8 / Laravel 9</div><div class="tr">Core Framework</div></div>
+    <div class="tc"><span class="ti">&#128196;</span><div class="tn">Eloquent ORM</div><div class="tr">Database Layer</div></div>
+    <div class="tc"><span class="ti">&#128070;</span><div class="tn">Fingpay AEPS</div><div class="tr">Biometric Gateway</div></div>
+    <div class="tc"><span class="ti">&#127968;</span><div class="tn">eMitra (Rajasthan)</div><div class="tr">Govt Portal API</div></div>
+    <div class="tc"><span class="ti">&#128272;</span><div class="tn">AES-CBC Encryption</div><div class="tr">Portal Handshake</div></div>
+    <div class="tc"><span class="ti">&#128203;</span><div class="tn">Blade Templates</div><div class="tr">Frontend Views</div></div>
+    <div class="tc"><span class="ti">&#128202;</span><div class="tn">DataTables</div><div class="tr">MIS Reports</div></div>
+    <div class="tc"><span class="ti">&#9887;&#65039;</span><div class="tn">Circuit Breakers</div><div class="tr">Fault Tolerance</div></div>
+    <div class="tc"><span class="ti">&#128260;</span><div class="tn">SHA256 Checksums</div><div class="tr">Audit Trail</div></div>
+    <div class="tc"><span class="ti">&#128205;</span><div class="tn">Haversine Geo</div><div class="tr">Location Validation</div></div>
+    <div class="tc"><span class="ti">&#9729;&#65039;</span><div class="tn">S3 Storage</div><div class="tr">KYC Documents</div></div>
+    <div class="tc"><span class="ti">&#128241;</span><div class="tn">WhatsApp API</div><div class="tr">Notifications</div></div>
+    <div class="tc"><span class="ti">&#128450;</span><div class="tn">MySQL Transactions</div><div class="tr">Atomicity</div></div>
+    <div class="tc"><span class="ti">&#128064;</span><div class="tn">Sentinel Auth</div><div class="tr">User Identity</div></div>
+    <div class="tc"><span class="ti">&#128295;</span><div class="tn">Repository Pattern</div><div class="tr">Architecture</div></div>
+    <div class="tc"><span class="ti">&#128394;</span><div class="tn">Custom Logger</div><div class="tr">Channel-based Logs</div></div>
+  </div>
+</section>
+</div>
+
+<!-- TIMELINE -->
+<div class="wrap">
+<section class="section" id="timeline" style="padding-top:0;">
+  <div class="stag">Development Journey</div>
+  <h2 class="stitle" style="margin-bottom:44px;">How this was built — phase by phase</h2>
+  <div class="timeline">
+    <div class="ti">
+      <div class="tdot"></div>
+      <div class="tphase">Phase 1</div>
+      <h4>Research, gateway analysis &amp; database design</h4>
+      <p>Studied Fingpay AEPS API documentation, mapped all onboarding and transaction endpoints, and designed the full schema: fingpay_aeps_onboard, fingpay_aeps_kyc, fingpay_aeps_two_fa, fingpay_aeps_transactions — with deliberate dual-wallet resolution columns baked in from the start.</p>
+    </div>
+    <div class="ti">
+      <div class="tdot"></div>
+      <div class="tphase">Phase 2</div>
+      <h4>AepsApiService — Fingpay gateway client (1600+ lines)</h4>
+      <p>Built the full Fingpay API client covering all onboarding, KYC, 2FA, and transaction operations. Implemented biometric XML PID decryption pipeline, device serial number extraction from multiple RD device formats, merchant PIN decryption, and haversine geo-distance calculation. UAT mode with weighted JSON test-case randomization for dev/staging.</p>
+    </div>
+    <div class="ti">
+      <div class="tdot"></div>
+      <div class="tphase">Phase 3</div>
+      <h4>Merchant onboarding flow &amp; multi-step KYC views</h4>
+      <p>Built the multi-step onboarding form, S3 document upload integration, status-based gate checks at the controller level, and the Bio-KYC + bank eKYC flows with the <code class="ic">FingpayAepsResponseTrait</code> for centralized FP097 handling. Wired all KYC status checks into the <code class="ic">servicesList()</code> gate.</p>
+    </div>
+    <div class="ti">
+      <div class="tdot"></div>
+      <div class="tphase">Phase 4</div>
+      <h4>Commission engine with SHA256 audit trail</h4>
+      <p>Built the three-tier commission service with hierarchy detection, slab-based model resolution, percentage calculation, and fixed responses for MS/BE. Added SHA256 checksum logging (input + output + combined) to the dedicated <code class="ic">aeps_commission_new_slab</code> log channel for every calculation.</p>
+    </div>
+    <div class="ti">
+      <div class="tdot"></div>
+      <div class="tphase">Phase 5</div>
+      <h4>Transaction engine — dual wallet, atomic operations</h4>
+      <p>Wired up the complete transaction initiation flow with DB transaction wrapping, type-branched wallet service calls, all custom exception types, geolocation from 2FA record, and the full <code class="ic">FingpayAepsTransactions</code> record creation with commission splits. Added WhatsApp notifications on success.</p>
+    </div>
+    <div class="ti">
+      <div class="tdot"></div>
+      <div class="tphase">Phase 6</div>
+      <h4>eMitra government portal integration</h4>
+      <p>Integrated the eMitra gateway: AES redirect decryption, SSO token verification, kiosk detail fetching, B2B transaction with MD5 checksum, verify endpoint, and cancel with refund. Built the <code class="ic">EmitraServicesController</code> service router and the <code class="ic">EmitraTransactionService</code> dual wallet orchestrator. Added circuit breakers to both eMitra API endpoints.</p>
+    </div>
+    <div class="ti">
+      <div class="tdot"></div>
+      <div class="tphase">Phase 7</div>
+      <h4>Dual-mode unification, edge cases &amp; MIS</h4>
+      <p>Unified both user types in the single controller: eMitra session guards, MS service ID re-resolution, the eMitra-specific commission branch, and view routing for onboarding vs. CW sessions. Built eMitra MIS reports with DataTables, AEPS transaction export, thermal receipt printing, and the complete admin transaction management views.</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">Maddox<span>Pay</span></div>
+  <p>AEPS + eMitra Integration — Full-Stack Engineering · MaddoxPay Platform · 2024–2026</p>
+  <div class="fl">
+    <a href="#overview">Overview</a>
+    <a href="#onboarding">Onboarding</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#dual-mode">Dual Mode</a>
+    <a href="#transactions">Transactions</a>
+    <a href="#security">Security</a>
+    <a href="#stack">Stack</a>
+    <a href="#timeline">Timeline</a>
+  </div>
+  <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);">
+    Built with Laravel · Fingpay AEPS · eMitra (Rajasthan Govt) · AES Encryption · Circuit Breakers · Pure CSS — no UI framework
+  </div>
+</footer>
+
+<script>
+// Scroll progress
+window.addEventListener('scroll', function() {
+  var h = document.documentElement;
+  document.getElementById('prog').style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+});
+
+// Scroll-in animations
+(function() {
+  var els = document.querySelectorAll('.fc, .sbc, .tc, .sc, .layer, .ti, .csc, .jstep, .dm, .wc, .cb-item');
+  els.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+  });
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  els.forEach(function(el) { obs.observe(el); });
+})();
+
+// Active nav highlight
+(function() {
+  var sections = document.querySelectorAll('[id]');
+  var links = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', function() {
+    var y = window.pageYOffset;
+    sections.forEach(function(s) {
+      if (y >= s.offsetTop - 80 && y < s.offsetTop + s.offsetHeight) {
+        links.forEach(function(a) { a.classList.remove('active'); });
+        var hit = document.querySelector('.nav-links a[href="#' + s.id + '"]');
+        if (hit) hit.classList.add('active');
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

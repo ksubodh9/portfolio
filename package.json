@@ -1,0 +1,15 @@
+{
+  "name": "subodh-portfolio",
+  "version": "1.0.0",
+  "description": "Personal portfolio of Subodh Kumar — AI / ML Engineer. Static site assembled from section partials + a projects data file.",
+  "author": "Subodh Kumar <subodh.24fd@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "homepage": "https://subodh122.github.io/",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "serve": "npx --yes serve -l 5173 ."
+  }
+}

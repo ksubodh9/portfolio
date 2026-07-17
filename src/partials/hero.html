@@ -1,0 +1,71 @@
+    <!-- ===== HERO ===== -->
+    <header id="home" class="hero">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-grid-lines" aria-hidden="true"></div>
+        <div class="orb orb-1" aria-hidden="true"></div>
+        <div class="orb orb-2" aria-hidden="true"></div>
+        <div class="orb orb-3" aria-hidden="true"></div>
+
+        <div class="container hero-inner">
+            <div class="hero-content">
+                <span class="availability-badge">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    Open to AI / ML Engineer roles
+                </span>
+                <h1 class="hero-headline">
+                    Building intelligent<br>
+                    systems with <span class="gradient-text">AI</span>
+                </h1>
+                <p class="hero-tagline"><span id="typed-tagline"></span></p>
+                <p class="hero-copy">
+                    I'm an AI / ML Engineer turning data into decisions — designing production
+                    RAG pipelines, predictive ML systems, and LLM-powered products on top of a
+                    4.5-year backend engineering foundation. From model to deployment.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="#projects"><i class="fas fa-layer-group" aria-hidden="true"></i> View AI Projects</a>
+                    <a class="btn btn-secondary" href="resources/resumes/Subodh_Kumar_ML_Engineer_Resume.pdf" target="_blank" rel="noopener"><i class="fas fa-file-download" aria-hidden="true"></i> Download Resume</a>
+                    <a class="btn btn-ghost" href="#contact"><i class="fas fa-paper-plane" aria-hidden="true"></i> Contact</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat"><strong>4.5+</strong><span>Years<br>engineering</span></div>
+                    <div class="hero-stat"><strong>10+</strong><span>AI / ML<br>projects</span></div>
+                    <div class="hero-stat"><strong>4</strong><span>LLM providers<br>orchestrated</span></div>
+                    <div class="hero-stat"><strong>85%+</strong><span>Model<br>accuracy</span></div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="code-card">
+                    <div class="code-head">
+                        <span class="code-dots"><span></span><span></span><span></span></span>
+                        <span class="code-title">rag_pipeline.py</span>
+                    </div>
+                    <div class="code-body">
+<span class="ln"><span class="c-com"># Retrieval-Augmented Generation</span></span>
+<span class="ln"><span class="c-key">from</span> fastapi <span class="c-key">import</span> FastAPI</span>
+<span class="ln"><span class="c-key">from</span> chroma <span class="c-key">import</span> VectorStore</span>
+<span class="ln"></span>
+<span class="ln">app = <span class="c-fn">FastAPI</span>()</span>
+<span class="ln">store = <span class="c-fn">VectorStore</span>(<span class="c-str">"bge-small-en"</span>)</span>
+<span class="ln"></span>
+<span class="ln"><span class="c-key">async def</span> <span class="c-fn">answer</span>(q):</span>
+<span class="ln">    ctx = store.<span class="c-fn">search</span>(q, k=<span class="c-num">5</span>)</span>
+<span class="ln">    <span class="c-key">return</span> <span class="c-fn">llm</span>(q, ctx)  <span class="c-com"># cited</span></span>
+                    </div>
+                </div>
+                <div class="hero-chip">
+                    <i class="fas fa-network-wired" aria-hidden="true"></i>
+                    <div>
+                        <strong>Production RAG</strong>
+                        <span>sub-second retrieval</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true">
+            <span>Scroll</span>
+            <div class="scroll-mouse"></div>
+        </div>
+    </header>

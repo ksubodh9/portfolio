@@ -1,0 +1,35 @@
+    <!-- ===== AI SHOWCASE ===== -->
+    <section id="ai-showcase" class="section">
+        <div class="container">
+            <p class="eyebrow" data-reveal>Under the Hood</p>
+            <h2 class="section-title" data-reveal>How my AI systems actually work.</h2>
+            <div class="showcase-grid">
+                <div data-reveal>
+                    <p class="section-copy">Every RAG system I build follows the same disciplined flow — documents become retrievable knowledge, and the LLM answers only from grounded, cited context. No hallucinated facts, no black boxes.</p>
+                    <div class="showcase-features">
+                        <div class="showcase-feature"><i class="fas fa-cut"></i><div><strong>Chunking</strong><span>Sliding window with overlap</span></div></div>
+                        <div class="showcase-feature"><i class="fas fa-vector-square"></i><div><strong>Embeddings</strong><span>FastEmbed · BGE on ONNX</span></div></div>
+                        <div class="showcase-feature"><i class="fas fa-database"></i><div><strong>Vector DB</strong><span>FAISS · Chroma · pgvector</span></div></div>
+                        <div class="showcase-feature"><i class="fas fa-search"></i><div><strong>Semantic Search</strong><span>Cosine similarity + re-rank</span></div></div>
+                        <div class="showcase-feature"><i class="fas fa-random"></i><div><strong>Multi-LLM</strong><span>Gemini · Groq · OpenAI · Claude</span></div></div>
+                        <div class="showcase-feature"><i class="fas fa-quote-right"></i><div><strong>Citations</strong><span>Grounded, source-linked answers</span></div></div>
+                    </div>
+                </div>
+
+                <div class="rag-diagram" data-reveal>
+                    <div class="rag-title">RAG Pipeline</div>
+                    <div class="rag-flow">
+                        <div class="rag-node"><div class="rag-node-icon"><i class="fas fa-file-alt"></i></div><div><strong>Documents</strong><span>PDF · DOCX · XLSX · HTML</span></div></div>
+                        <div class="rag-arrow">↓</div>
+                        <div class="rag-node"><div class="rag-node-icon"><i class="fas fa-cut"></i></div><div><strong>Chunk + Embed</strong><span>BGE embeddings (ONNX)</span></div></div>
+                        <div class="rag-arrow">↓</div>
+                        <div class="rag-node"><div class="rag-node-icon"><i class="fas fa-database"></i></div><div><strong>Vector Store</strong><span>Chroma / FAISS index</span></div></div>
+                        <div class="rag-arrow">↓</div>
+                        <div class="rag-node"><div class="rag-node-icon"><i class="fas fa-search"></i></div><div><strong>Retrieve top-k</strong><span>semantic similarity</span></div></div>
+                        <div class="rag-arrow">↓</div>
+                        <div class="rag-node"><div class="rag-node-icon"><i class="fas fa-robot"></i></div><div><strong>LLM Generation</strong><span>grounded + cited answer</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

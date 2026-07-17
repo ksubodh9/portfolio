@@ -1,0 +1,87 @@
+[
+  {
+    "featured": true,
+    "media": { "type": "placeholder", "variant": "teal", "icon": "fas fa-file-alt", "badge": "Flagship · GenAI" },
+    "cardHref": "https://github.com/ksubodh9/DocIntel-AI-powered-Document-Intelligence",
+    "cardAria": "View DocIntel on GitHub",
+    "overlay": { "icon": "fab fa-github", "label": "View Repository" },
+    "type": "Flagship · Enterprise RAG Platform",
+    "tech": "FastAPI · Chroma · Supabase",
+    "title": "DocIntel — AI Document Intelligence",
+    "descHtml": "Upload any document and get AI classification, summarisation, and citation-backed Q&amp;A through a production RAG pipeline: FastEmbed (ONNX) embeddings + Chroma vector search, with a multi-provider LLM abstraction (Gemini, Groq, OpenAI, Anthropic) and automatic fallback. Sub-second retrieval across 1000+ chunks; embedding footprint cut from ~4GB to ~400MB; 95%+ uptime on a 16GB free tier.",
+    "stats": [
+      { "icon": "fas fa-bolt", "text": "&lt;1s retrieval latency" },
+      { "icon": "fas fa-layer-group", "text": "4 LLM providers" },
+      { "icon": "fas fa-file-lines", "text": "6 doc formats" },
+      { "icon": "fas fa-signal", "text": "95%+ uptime" }
+    ],
+    "chips": ["FastAPI", "RAG", "Chroma", "FastEmbed", "Supabase pgvector", "Gemini", "JWT/JWKS", "Docker", "React"],
+    "link": { "href": "https://github.com/ksubodh9/DocIntel-AI-powered-Document-Intelligence", "label": "View repository" }
+  },
+  {
+    "media": { "type": "image", "src": "assets/img/projects/predictive-maintenance/dashboard.png", "alt": "Industrial equipment predictive maintenance dashboard", "width": 700, "height": 394 },
+    "cardHref": "https://github.com/ksubodh9/AI-Based-Industrial-Equipment-Health-Predictive-Maintenance",
+    "cardAria": "View Predictive Maintenance on GitHub",
+    "overlay": { "icon": "fab fa-github", "label": "View Repository" },
+    "type": "ML Systems",
+    "tech": "XGBoost · SHAP",
+    "title": "Predictive Maintenance Platform",
+    "descHtml": "Detects industrial equipment faults before they cause downtime, using a Random Forest + XGBoost ensemble over sensor data (vibration, temperature, pressure) with wavelet feature engineering and SHAP explainability. 85%+ accuracy, sub-100ms inference, served via FastAPI + a live Streamlit dashboard.",
+    "link": { "href": "https://github.com/ksubodh9/AI-Based-Industrial-Equipment-Health-Predictive-Maintenance", "label": "View repository" }
+  },
+  {
+    "media": { "type": "image", "src": "assets/img/projects/smart-ai-assistant/chat.png", "alt": "Smart AI Assistant chat widget", "width": 700, "height": 394 },
+    "cardHref": "https://github.com/ksubodh9/smart-ai-assistant",
+    "cardAria": "View Smart AI Assistant on GitHub",
+    "overlay": { "icon": "fab fa-github", "label": "View Repository" },
+    "type": "GenAI · RAG",
+    "tech": "FAISS · LLM",
+    "title": "Smart AI Assistant",
+    "descHtml": "An end-to-end RAG-powered conversational assistant with semantic search, bilingual (English/Hindi) support, and auto error detection. A FAISS-indexed pipeline with context-aware generation that reduced repetitive support queries by ~40% in production.",
+    "link": { "href": "https://github.com/ksubodh9/smart-ai-assistant", "label": "View repository" }
+  },
+  {
+    "media": { "type": "placeholder", "variant": "indigo", "icon": "fas fa-compass", "badge": "GenAI · RAG" },
+    "cardHref": "https://github.com/ksubodh9",
+    "cardAria": "View Career Compass on GitHub",
+    "overlay": { "icon": "fab fa-github", "label": "View Repository" },
+    "type": "AI Recommendation",
+    "tech": "FastAPI · FAISS",
+    "title": "Career Compass — Guidance Engine",
+    "descHtml": "A personalised AI career-guidance platform with a custom RAG pipeline and voice-enabled interaction. FAISS vector retrieval for context-aware responses over a guidance knowledge base, on a scalable FastAPI backend with JWT auth and modular service design.",
+    "link": { "href": "https://github.com/ksubodh9", "label": "View repository" }
+  },
+  {
+    "media": { "type": "image", "src": "assets/img/projects/churn-house-price/dashboard.png", "alt": "ML prediction dashboard for churn and house price", "width": 700, "height": 394 },
+    "cardHref": "https://github.com/ksubodh9/Customer-Churn-and-House-Price-Pridiction-Multi-Model-",
+    "cardAria": "View Churn and House Price Prediction on GitHub",
+    "overlay": { "icon": "fab fa-github", "label": "View Repository" },
+    "type": "Full-Stack ML",
+    "tech": "FastAPI · Streamlit",
+    "title": "Churn &amp; House Price Prediction",
+    "descHtml": "A full-stack ML dashboard with dual prediction models behind a clean FastAPI + SQLModel backend. Compared Logistic Regression, Random Forest, Gradient Boosting, AdaBoost &amp; XGBoost with reusable preprocessing pipelines — ~80% churn accuracy across three deployment modes.",
+    "link": { "href": "https://share.streamlit.io/user/ksubodh9", "label": "View live app" }
+  },
+  {
+    "media": { "type": "image", "src": "assets/img/projects/walmart/forecast.png", "alt": "Walmart sales time-series forecasting charts", "width": 700, "height": 394 },
+    "cardHref": "https://github.com/ksubodh9/wallmart",
+    "cardAria": "View Walmart Sales Forecasting on GitHub",
+    "overlay": { "icon": "fab fa-github", "label": "View Repository" },
+    "type": "Data Science",
+    "tech": "ARIMA · SARIMA",
+    "title": "Walmart Sales Forecasting",
+    "descHtml": "Time-series demand forecasting for retail planning, with trend and seasonality decomposition. Regression + ARIMA/SARIMA models with temporal feature engineering over historical sales — a foundation for inventory, staffing, and supply-chain optimisation.",
+    "link": { "href": "https://github.com/ksubodh9/wallmart", "label": "View repository" }
+  },
+  {
+    "media": { "type": "image", "src": "assets/img/projects/maddox/home.png", "alt": "MaddoxPay fintech platform dashboard", "width": 700, "height": 394 },
+    "cardHref": "resources/case-studies/portfolio-fintech-platform-sanitized.html",
+    "cardAria": "Read MaddoxPay full platform case study",
+    "overlay": { "icon": "fas fa-arrow-right", "label": "Read Case Study" },
+    "type": "Backend Foundation · Fintech",
+    "tech": "Laravel · MySQL · FastAPI",
+    "title": "MaddoxPay — Production Fintech Platform",
+    "descHtml": "The backend engineering foundation behind the AI work: a high-volume financial-services platform I built end-to-end — 100K+ monthly transactions, ₹1M+ daily payouts via Axis Bank — and where I first put ML into production for anomaly detection and fraud insight via FastAPI.",
+    "link": { "href": "resources/case-studies/portfolio-fintech-platform-sanitized.html", "label": "Read full case study" }
+  }
+]
