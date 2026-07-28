@@ -2,6 +2,9 @@
 node_modules/
 npm-debug.log*
 
+# Private / unsanitized case studies — keep locally, never publish
+_private-raw-case-studies/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

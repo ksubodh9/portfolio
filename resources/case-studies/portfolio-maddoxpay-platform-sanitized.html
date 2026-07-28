@@ -852,7 +852,7 @@ code.ic { background: var(--card2); color: var(--sky); padding: 2px 7px; border-
         <h4><span>&#128203;</span> MD5 Checksums + Consumer Keys</h4>
         <ul>
           <li>B2B and verify requests include MD5 checksum of credential array (including SSOTOKEN)</li>
-          <li>Consumer keys generated as SHA256 of <code class="ic">mt_rand() + microtime()</code></li>
+          <li>Consumer keys generated using cryptographically secure randomness</li>
           <li>Timestamps formatted as <code class="ic">YmdHisv</code> (millisecond precision)</li>
           <li>Full request/response logged to <code class="ic">emitra_api_logs</code> channel</li>
         </ul>
