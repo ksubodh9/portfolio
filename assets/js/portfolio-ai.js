@@ -120,18 +120,35 @@
     bars.forEach(function (b) { b.style.width = (b.dataset.w || 60) + '%'; });
   }
 
-  /* ── Contact form → mailto ── */
+  /* ── Contact form → Web3Forms (delivers to email) ── */
   var form = document.getElementById('contactForm');
   if (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var name = (document.getElementById('contactName').value || '').trim();
-      var email = (document.getElementById('contactEmail').value || '').trim();
-      var subject = (document.getElementById('contactSubject').value || '').trim() || 'Portfolio Contact';
-      var message = (document.getElementById('contactMessage').value || '').trim();
-      var body = 'Name: ' + name + '\nEmail: ' + email + '\n\n' + message;
-      window.location.href = 'mailto:subodh.24fd@gmail.com?subject=' +
-        encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      var btn = form.querySelector('button[type="submit"]');
+      var original = btn.innerHTML;
+      var reset = function (html, keepDisabled) {
+        btn.innerHTML = html;
+        if (!keepDisabled) {
+          setTimeout(function () { btn.disabled = false; btn.innerHTML = original; }, 4500);
+        }
+      };
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res.success) { form.reset(); reset('<i class="fas fa-check"></i> Message sent!'); }
+          else { reset('<i class="fas fa-exclamation-triangle"></i> Failed — email me instead'); }
+        })
+        .catch(function () {
+          reset('<i class="fas fa-exclamation-triangle"></i> Failed — email me instead');
+        });
     });
   }
 }());
