@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "homepage": "https://subodh122.github.io/",
+  "homepage": "https://ksubodh9.github.io/portfolio/",
   "scripts": {
     "build": "node scripts/build.mjs",
     "watch": "node scripts/build.mjs --watch",
