@@ -4,6 +4,30 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ── Dynamic years-of-experience ── */
+  function initYearsExperience() {
+    function yearsSince(sinceStr) {
+      var since = new Date(sinceStr);
+      var months = (Date.now() - since.getTime()) / (1000 * 60 * 60 * 24 * 30.4368);
+      var years = months / 12;
+      return Math.floor(years * 2) / 2; // floor to nearest 0.5
+    }
+    document.querySelectorAll('.js-years-exp-badge[data-since]').forEach(function (el) {
+      var years = yearsSince(el.getAttribute('data-since'));
+      el.textContent = (years % 1 === 0 ? years.toFixed(0) : years.toFixed(1)) + '+';
+    });
+    document.querySelectorAll('.js-years-exp[data-since]').forEach(function (el) {
+      var years = yearsSince(el.getAttribute('data-since'));
+      var label = (years % 1 === 0 ? years.toFixed(0) : years.toFixed(1)) + '-year';
+      el.textContent = label;
+    });
+  }
+  initYearsExperience();
+
+  /* ── Footer copyright year ── */
+  var footerYear = document.getElementById('footer-year');
+  if (footerYear) footerYear.textContent = new Date().getFullYear();
+
   /* ── Typed tagline ── */
   function initTyped() {
     var el = document.getElementById('typed-tagline');
@@ -149,6 +173,26 @@
         .catch(function () {
           reset('<i class="fas fa-exclamation-triangle"></i> Failed — email me instead');
         });
+    });
+  }
+
+  /* ── Projects category filter ── */
+  var filterBtns = document.querySelectorAll('.project-filter');
+  var projectCards = document.querySelectorAll('.project-grid .project-card');
+  if (filterBtns.length && projectCards.length) {
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var filter = btn.getAttribute('data-filter');
+        filterBtns.forEach(function (b) {
+          var active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        projectCards.forEach(function (card) {
+          var show = filter === 'all' || card.getAttribute('data-category') === filter;
+          card.classList.toggle('is-hidden', !show);
+        });
+      });
     });
   }
 }());

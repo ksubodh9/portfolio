@@ -7,8 +7,23 @@
             <h2 class="section-title" data-reveal>AI products, shipped &mdash; not just notebooks.</h2>
             <p class="section-copy" data-reveal>Each project is a case study: the problem, the solution, the architecture, and the measurable result &mdash; built on a production backend foundation.</p>
 
-            <div class="project-grid" data-reveal>
-<!-- projects:cards -->
+            <div class="project-filters" data-reveal role="tablist" aria-label="Filter projects by category">
+                <button class="project-filter is-active" data-filter="all" role="tab" aria-selected="true">All <span class="pf-count">8</span></button>
+                <button class="project-filter" data-filter="genai" role="tab" aria-selected="false"><i class="fas fa-robot" aria-hidden="true"></i> Gen AI <span class="pf-count">4</span></button>
+                <button class="project-filter" data-filter="ml" role="tab" aria-selected="false"><i class="fas fa-brain" aria-hidden="true"></i> ML <span class="pf-count">3</span></button>
+                <button class="project-filter" data-filter="backend" role="tab" aria-selected="false"><i class="fas fa-server" aria-hidden="true"></i> Backend <span class="pf-count">1</span></button>
+            </div>
+
+            <div class="project-grid project-grid--featured" data-reveal id="projectGridFeatured">
+<!-- projects:featured -->
+            </div>
+
+            <div class="projects-divider" data-reveal>
+                <span class="projects-divider__label">All Projects</span>
+            </div>
+
+            <div class="project-grid project-grid--all" data-reveal id="projectGrid">
+<!-- projects:rest -->
             </div>
         </div>
     </section>

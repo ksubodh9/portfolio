@@ -12,18 +12,18 @@
     <!-- Primary SEO -->
     <title>Subodh Kumar | AI / ML Engineer · Generative AI &amp; RAG Systems</title>
     <meta name="description" content="Subodh Kumar — AI / ML Engineer and Generative AI developer with 4.5+ years of backend engineering. Builds production RAG pipelines, FastAPI model-serving, vector search, and predictive ML systems. Open to AI/ML roles.">
-    <meta name="keywords" content="Subodh Kumar, AI Engineer, Machine Learning Engineer, Generative AI Engineer, GenAI, RAG Developer, FastAPI Developer, Data Scientist, LLM, Vector Database, FAISS, Embeddings, Semantic Search, Predictive Analytics, Backend Engineer, Python, scikit-learn, XGBoost">
+    <meta name="keywords" content="Subodh Kumar, AI Engineer, Machine Learning Engineer, Generative AI Engineer, GenAI, RAG Developer, FastAPI Developer, Data Scientist, LLM, Vector Database, FAISS, Embeddings, Semantic Search, Predictive Analytics, Backend Engineer, Python, scikit-learn, XGBoost, NL2SQL, AI Agents, AI Safety, OpenAPI, Hexagonal Architecture, DDD">
     <meta name="author" content="Subodh Kumar">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://subodh122.github.io/">
+    <link rel="canonical" href="https://ksubodh9.github.io/">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Subodh Kumar — AI/ML Engineer">
     <meta property="og:title" content="Subodh Kumar | AI / ML Engineer · Generative AI &amp; RAG Systems">
     <meta property="og:description" content="Production RAG pipelines, FastAPI model serving, predictive ML, and vector search — built on a strong backend engineering foundation.">
-    <meta property="og:image" content="https://subodh122.github.io/assets/img/og-cover.jpg">
-    <meta property="og:url" content="https://subodh122.github.io/">
+    <meta property="og:image" content="https://ksubodh9.github.io/assets/img/og-cover.jpg">
+    <meta property="og:url" content="https://ksubodh9.github.io/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Subodh Kumar | AI / ML Engineer · GenAI &amp; RAG">
     <meta name="twitter:description" content="AI Engineer building intelligent systems — RAG, LLMs, predictive ML, FastAPI, vector databases.">
@@ -36,12 +36,12 @@
       "name": "Subodh Kumar",
       "jobTitle": "AI / ML Engineer",
       "email": "mailto:subodh.24fd@gmail.com",
-      "url": "https://subodh122.github.io/",
+      "url": "https://ksubodh9.github.io/",
       "sameAs": [
         "https://github.com/ksubodh9",
         "https://www.linkedin.com/in/er-subodh-kumar/"
       ],
-      "knowsAbout": ["Machine Learning","Generative AI","RAG Pipelines","FastAPI","Vector Databases","Semantic Search","Predictive Analytics","Python","Backend Engineering"],
+      "knowsAbout": ["Machine Learning","Generative AI","RAG Pipelines","FastAPI","Vector Databases","Semantic Search","Predictive Analytics","Python","Backend Engineering","AI Agents","NL2SQL","AI Safety","OpenAPI","Domain-Driven Design"],
       "description": "AI/ML Engineer specialising in production RAG systems, predictive ML, and FastAPI model serving with a strong backend engineering foundation."
     }
     </script>
@@ -118,7 +118,7 @@
                 <p class="hero-copy">
                     I'm an AI / ML Engineer turning data into decisions — designing production
                     RAG pipelines, predictive ML systems, and LLM-powered products on top of a
-                    4.5-year backend engineering foundation. From model to deployment.
+                    <span class="js-years-exp" data-since="2021-05-01">4.5-year</span> backend engineering foundation. From model to deployment.
                 </p>
                 <div class="hero-actions">
                     <a class="btn btn-primary" href="#projects"><i class="fas fa-layer-group" aria-hidden="true"></i> View AI Projects</a>
@@ -127,8 +127,8 @@
                     <a class="btn btn-ghost" href="#contact"><i class="fas fa-paper-plane" aria-hidden="true"></i> Contact</a>
                 </div>
                 <div class="hero-stats">
-                    <div class="hero-stat"><strong>4.5+</strong><span>Years<br>engineering</span></div>
-                    <div class="hero-stat"><strong>10+</strong><span>AI / ML<br>projects</span></div>
+                    <div class="hero-stat"><strong class="js-years-exp-badge" data-since="2021-05-01">4.5+</strong><span>Years<br>engineering</span></div>
+                    <div class="hero-stat"><strong>8+</strong><span>AI / ML<br>projects</span></div>
                     <div class="hero-stat"><strong>4</strong><span>LLM providers<br>orchestrated</span></div>
                     <div class="hero-stat"><strong>85%+</strong><span>Model<br>accuracy</span></div>
                 </div>
@@ -205,7 +205,7 @@
                     <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>Production RAG platform with multi-LLM orchestration, vector search, and citation-backed answers</span></li>
                     <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>Predictive ML systems with ensemble models and SHAP explainability at 85%+ accuracy</span></li>
                     <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>FastAPI model-serving, JWT/JWKS auth, and security-hardened API design</span></li>
-                    <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>4.5+ years shipping high-volume fintech backends — the systems thinking behind the AI</span></li>
+                    <li><i class="fas fa-check-circle" aria-hidden="true"></i><span><strong class="js-years-exp-badge" data-since="2021-05-01">4.5+</strong> years shipping high-volume fintech backends — the systems thinking behind the AI</span></li>
                 </ul>
                 <div class="hero-actions">
                     <a class="btn btn-primary" href="resources/resumes/Subodh_Kumar_ML_Engineer_Resume.pdf" target="_blank" rel="noopener"><i class="fas fa-eye" aria-hidden="true"></i> View Resume</a>
@@ -375,23 +375,30 @@
             <h2 class="section-title" data-reveal>AI products, shipped &mdash; not just notebooks.</h2>
             <p class="section-copy" data-reveal>Each project is a case study: the problem, the solution, the architecture, and the measurable result &mdash; built on a production backend foundation.</p>
 
-            <div class="project-grid" data-reveal>
-                <article class="project-card project-card-featured">
+            <div class="project-filters" data-reveal role="tablist" aria-label="Filter projects by category">
+                <button class="project-filter is-active" data-filter="all" role="tab" aria-selected="true">All <span class="pf-count">8</span></button>
+                <button class="project-filter" data-filter="genai" role="tab" aria-selected="false"><i class="fas fa-robot" aria-hidden="true"></i> Gen AI <span class="pf-count">4</span></button>
+                <button class="project-filter" data-filter="ml" role="tab" aria-selected="false"><i class="fas fa-brain" aria-hidden="true"></i> ML <span class="pf-count">3</span></button>
+                <button class="project-filter" data-filter="backend" role="tab" aria-selected="false"><i class="fas fa-server" aria-hidden="true"></i> Backend <span class="pf-count">1</span></button>
+            </div>
+
+            <div class="project-grid project-grid--featured" data-reveal id="projectGridFeatured">
+                <article class="project-card is-flagship" data-category="genai">
                     <a class="project-image ph ph-teal" href="https://github.com/ksubodh9/DocIntel-AI-powered-Document-Intelligence" target="_blank" rel="noopener noreferrer" aria-label="View DocIntel on GitHub">
-                        <span class="ph-badge">Flagship · GenAI</span>
+                        <span class="project-flag"><i class="fas fa-star" aria-hidden="true"></i> Flagship</span>
                         <div class="ph-dots" aria-hidden="true"></div>
                         <i class="fas fa-file-alt ph-icon" aria-hidden="true"></i>
                         <div class="project-overlay" aria-hidden="true">
                             <span><i class="fab fa-github"></i> View Repository</span>
                         </div>
                     </a>
-                    <div class="project-body project-body-with-bg">
+                    <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">Flagship · Enterprise RAG Platform</span>
+                            <span class="project-cat cat-genai">Gen AI</span>
                             <span class="project-tech">FastAPI · Chroma · Supabase</span>
                         </div>
                         <h3>DocIntel — AI Document Intelligence</h3>
-                        <p>Upload any document and get AI classification, summarisation, and citation-backed Q&amp;A through a production RAG pipeline: FastEmbed (ONNX) embeddings + Chroma vector search, with a multi-provider LLM abstraction (Gemini, Groq, OpenAI, Anthropic) and automatic fallback. Sub-second retrieval across 1000+ chunks; embedding footprint cut from ~4GB to ~400MB; 95%+ uptime on a 16GB free tier.</p>
+                        <p class="project-desc">Upload any document and get AI classification, summarisation, and citation-backed Q&amp;A through a production RAG pipeline: FastEmbed (ONNX) embeddings + Chroma vector search, with a multi-provider LLM abstraction (Gemini, Groq, OpenAI, Anthropic) and automatic fallback. Sub-second retrieval across 1000+ chunks; embedding footprint cut from ~4GB to ~400MB; 95%+ uptime on a 16GB free tier.</p>
                         <div class="project-stats">
                             <span><i class="fas fa-bolt" aria-hidden="true"></i> &lt;1s retrieval latency</span>
                             <span><i class="fas fa-layer-group" aria-hidden="true"></i> 4 LLM providers</span>
@@ -399,7 +406,7 @@
                             <span><i class="fas fa-signal" aria-hidden="true"></i> 95%+ uptime</span>
                         </div>
                         <div class="project-service-chips">
-                            <span>FastAPI</span><span>RAG</span><span>Chroma</span><span>FastEmbed</span><span>Supabase pgvector</span><span>Gemini</span><span>JWT/JWKS</span><span>Docker</span><span>React</span>
+                            <span>FastAPI</span><span>RAG</span><span>Chroma</span><span>FastEmbed</span><span>Supabase pgvector</span><span>Gemini</span>
                         </div>
                         <a class="project-link" href="https://github.com/ksubodh9/DocIntel-AI-powered-Document-Intelligence" target="_blank" rel="noopener noreferrer">
                             View repository <i class="fas fa-arrow-right" aria-hidden="true"></i>
@@ -407,7 +414,44 @@
                     </div>
                 </article>
 
-                <article class="project-card">
+                <article class="project-card is-flagship" data-category="genai">
+                    <a class="project-image ph ph-indigo" href="resources/case-studies/portfolio-laraopscopilot-sanitized.html" target="_blank" rel="noopener noreferrer" aria-label="Read the LaraOpsCopilot case study">
+                        <span class="project-flag"><i class="fas fa-star" aria-hidden="true"></i> Flagship</span>
+                        <div class="ph-dots" aria-hidden="true"></div>
+                        <i class="fas fa-robot ph-icon" aria-hidden="true"></i>
+                        <div class="project-overlay" aria-hidden="true">
+                            <span><i class="fas fa-arrow-right"></i> Read Case Study</span>
+                        </div>
+                    </a>
+                    <div class="project-body">
+                        <div class="project-meta">
+                            <span class="project-cat cat-genai">Gen AI</span>
+                            <span class="project-tech">FastAPI · FAISS · NL→SQL</span>
+                        </div>
+                        <h3>LaraOpsCopilot — AI Operations Copilot</h3>
+                        <p class="project-desc">A drop-in AI operations layer for any Laravel app. Ask in plain English and get answers from three AI agents served by a FastAPI backend: a <strong>Database</strong> agent that turns natural language into guarded, read-only SQL behind a dual AST-based SQL guard and approval flow; a <strong>Log</strong> agent that PII-masks logs, clusters errors by signature, and writes LLM root-cause narratives; and a <strong>Knowledge Base</strong> agent doing chunk → embed → FAISS → cited RAG answers. A swappable LLM/embedding provider abstraction (Anthropic, OpenAI, Gemini, Ollama + offline echo) lets the whole system run and test fully offline. Every action is role-gated and audited.</p>
+                        <div class="project-stats">
+                            <span><i class="fas fa-shield-halved" aria-hidden="true"></i> Guarded read-only SQL</span>
+                            <span><i class="fas fa-robot" aria-hidden="true"></i> 3 AI agents</span>
+                            <span><i class="fas fa-random" aria-hidden="true"></i> 4+ LLM providers</span>
+                            <span><i class="fas fa-vial" aria-hidden="true"></i> 40 test files</span>
+                        </div>
+                        <div class="project-service-chips">
+                            <span>FastAPI</span><span>RAG</span><span>FAISS</span><span>NL→SQL</span><span>sqlglot</span><span>Log RCA</span>
+                        </div>
+                        <a class="project-link" href="resources/case-studies/portfolio-laraopscopilot-sanitized.html" target="_blank" rel="noopener noreferrer">
+                            Read full case study <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+
+            <div class="projects-divider" data-reveal>
+                <span class="projects-divider__label">All Projects</span>
+            </div>
+
+            <div class="project-grid project-grid--all" data-reveal id="projectGrid">
+                <article class="project-card" data-category="ml">
                     <a class="project-image" href="https://github.com/ksubodh9/AI-Based-Industrial-Equipment-Health-Predictive-Maintenance" target="_blank" rel="noopener noreferrer" aria-label="View Predictive Maintenance on GitHub">
                         <img src="assets/img/projects/predictive-maintenance/dashboard.png" alt="Industrial equipment predictive maintenance dashboard" loading="lazy" width="700" height="394">
                         <div class="project-overlay" aria-hidden="true">
@@ -416,18 +460,18 @@
                     </a>
                     <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">ML Systems</span>
+                            <span class="project-cat cat-ml">ML</span>
                             <span class="project-tech">XGBoost · SHAP</span>
                         </div>
                         <h3>Predictive Maintenance Platform</h3>
-                        <p>Detects industrial equipment faults before they cause downtime, using a Random Forest + XGBoost ensemble over sensor data (vibration, temperature, pressure) with wavelet feature engineering and SHAP explainability. 85%+ accuracy, sub-100ms inference, served via FastAPI + a live Streamlit dashboard.</p>
+                        <p class="project-desc">Detects industrial equipment faults before they cause downtime, using a Random Forest + XGBoost ensemble over sensor data (vibration, temperature, pressure) with wavelet feature engineering and SHAP explainability. 85%+ accuracy, sub-100ms inference, served via FastAPI + a live Streamlit dashboard.</p>
                         <a class="project-link" href="https://github.com/ksubodh9/AI-Based-Industrial-Equipment-Health-Predictive-Maintenance" target="_blank" rel="noopener noreferrer">
                             View repository <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </a>
                     </div>
                 </article>
 
-                <article class="project-card">
+                <article class="project-card" data-category="genai">
                     <a class="project-image" href="https://github.com/ksubodh9/smart-ai-assistant" target="_blank" rel="noopener noreferrer" aria-label="View Smart AI Assistant on GitHub">
                         <img src="assets/img/projects/smart-ai-assistant/chat.png" alt="Smart AI Assistant chat widget" loading="lazy" width="700" height="394">
                         <div class="project-overlay" aria-hidden="true">
@@ -436,40 +480,38 @@
                     </a>
                     <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">GenAI · RAG</span>
+                            <span class="project-cat cat-genai">Gen AI</span>
                             <span class="project-tech">FAISS · LLM</span>
                         </div>
                         <h3>Smart AI Assistant</h3>
-                        <p>An end-to-end RAG-powered conversational assistant with semantic search, bilingual (English/Hindi) support, and auto error detection. A FAISS-indexed pipeline with context-aware generation that reduced repetitive support queries by ~40% in production.</p>
+                        <p class="project-desc">An end-to-end RAG-powered conversational assistant with semantic search, bilingual (English/Hindi) support, and auto error detection. A FAISS-indexed pipeline with context-aware generation that reduced repetitive support queries by ~40% in production.</p>
                         <a class="project-link" href="https://github.com/ksubodh9/smart-ai-assistant" target="_blank" rel="noopener noreferrer">
                             View repository <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </a>
                     </div>
                 </article>
 
-                <article class="project-card">
-                    <a class="project-image ph ph-indigo" href="https://github.com/ksubodh9" target="_blank" rel="noopener noreferrer" aria-label="View Career Compass on GitHub">
-                        <span class="ph-badge">GenAI · RAG</span>
-                        <div class="ph-dots" aria-hidden="true"></div>
-                        <i class="fas fa-compass ph-icon" aria-hidden="true"></i>
+                <article class="project-card" data-category="genai">
+                    <a class="project-image" href="https://github.com/ksubodh9" target="_blank" rel="noopener noreferrer" aria-label="View Guidora AI on GitHub">
+                        <img src="assets/img/projects/GuidoraAI/login.png" alt="Guidora AI career guidance platform login screen" loading="lazy" width="700" height="394">
                         <div class="project-overlay" aria-hidden="true">
                             <span><i class="fab fa-github"></i> View Repository</span>
                         </div>
                     </a>
                     <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">AI Recommendation</span>
+                            <span class="project-cat cat-genai">Gen AI</span>
                             <span class="project-tech">FastAPI · FAISS</span>
                         </div>
-                        <h3>Career Compass — Guidance Engine</h3>
-                        <p>A personalised AI career-guidance platform with a custom RAG pipeline and voice-enabled interaction. FAISS vector retrieval for context-aware responses over a guidance knowledge base, on a scalable FastAPI backend with JWT auth and modular service design.</p>
+                        <h3>Guidora AI</h3>
+                        <p class="project-desc">A personalised AI career-guidance platform with a custom RAG pipeline and voice-enabled interaction. FAISS vector retrieval for context-aware responses over a guidance knowledge base, on a scalable FastAPI backend with JWT auth and modular service design.</p>
                         <a class="project-link" href="https://github.com/ksubodh9" target="_blank" rel="noopener noreferrer">
                             View repository <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </a>
                     </div>
                 </article>
 
-                <article class="project-card">
+                <article class="project-card" data-category="ml">
                     <a class="project-image" href="https://github.com/ksubodh9/Customer-Churn-and-House-Price-Pridiction-Multi-Model-" target="_blank" rel="noopener noreferrer" aria-label="View Churn and House Price Prediction on GitHub">
                         <img src="assets/img/projects/churn-house-price/dashboard.png" alt="ML prediction dashboard for churn and house price" loading="lazy" width="700" height="394">
                         <div class="project-overlay" aria-hidden="true">
@@ -478,18 +520,18 @@
                     </a>
                     <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">Full-Stack ML</span>
+                            <span class="project-cat cat-ml">ML</span>
                             <span class="project-tech">FastAPI · Streamlit</span>
                         </div>
                         <h3>Churn &amp; House Price Prediction</h3>
-                        <p>A full-stack ML dashboard with dual prediction models behind a clean FastAPI + SQLModel backend. Compared Logistic Regression, Random Forest, Gradient Boosting, AdaBoost &amp; XGBoost with reusable preprocessing pipelines — ~80% churn accuracy across three deployment modes.</p>
+                        <p class="project-desc">A full-stack ML dashboard with dual prediction models behind a clean FastAPI + SQLModel backend. Compared Logistic Regression, Random Forest, Gradient Boosting, AdaBoost &amp; XGBoost with reusable preprocessing pipelines — ~80% churn accuracy across three deployment modes.</p>
                         <a class="project-link" href="https://share.streamlit.io/user/ksubodh9" target="_blank" rel="noopener noreferrer">
                             View live app <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </a>
                     </div>
                 </article>
 
-                <article class="project-card">
+                <article class="project-card" data-category="ml">
                     <a class="project-image" href="https://github.com/ksubodh9/wallmart" target="_blank" rel="noopener noreferrer" aria-label="View Walmart Sales Forecasting on GitHub">
                         <img src="assets/img/projects/walmart/forecast.png" alt="Walmart sales time-series forecasting charts" loading="lazy" width="700" height="394">
                         <div class="project-overlay" aria-hidden="true">
@@ -498,18 +540,18 @@
                     </a>
                     <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">Data Science</span>
+                            <span class="project-cat cat-ml">ML</span>
                             <span class="project-tech">ARIMA · SARIMA</span>
                         </div>
                         <h3>Walmart Sales Forecasting</h3>
-                        <p>Time-series demand forecasting for retail planning, with trend and seasonality decomposition. Regression + ARIMA/SARIMA models with temporal feature engineering over historical sales — a foundation for inventory, staffing, and supply-chain optimisation.</p>
+                        <p class="project-desc">Time-series demand forecasting for retail planning, with trend and seasonality decomposition. Regression + ARIMA/SARIMA models with temporal feature engineering over historical sales — a foundation for inventory, staffing, and supply-chain optimisation.</p>
                         <a class="project-link" href="https://github.com/ksubodh9/wallmart" target="_blank" rel="noopener noreferrer">
                             View repository <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </a>
                     </div>
                 </article>
 
-                <article class="project-card">
+                <article class="project-card" data-category="backend">
                     <a class="project-image" href="resources/case-studies/portfolio-fintech-platform-sanitized.html" target="_blank" rel="noopener noreferrer" aria-label="Read MaddoxPay full platform case study">
                         <img src="assets/img/projects/maddox/home.png" alt="MaddoxPay fintech platform dashboard" loading="lazy" width="700" height="394">
                         <div class="project-overlay" aria-hidden="true">
@@ -518,11 +560,11 @@
                     </a>
                     <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">Backend Foundation · Fintech</span>
+                            <span class="project-cat cat-backend">Backend</span>
                             <span class="project-tech">Laravel · MySQL · FastAPI</span>
                         </div>
                         <h3>MaddoxPay — Production Fintech Platform</h3>
-                        <p>The backend engineering foundation behind the AI work: a high-volume financial-services platform I built end-to-end — 100K+ monthly transactions, ₹1M+ daily payouts via Axis Bank — and where I first put ML into production for anomaly detection and fraud insight via FastAPI.</p>
+                        <p class="project-desc">The backend engineering foundation behind the AI work: a high-volume financial-services platform I built end-to-end — 100K+ monthly transactions, ₹1M+ daily payouts via Axis Bank — and where I first put ML into production for anomaly detection and fraud insight via FastAPI.</p>
                         <a class="project-link" href="resources/case-studies/portfolio-fintech-platform-sanitized.html" target="_blank" rel="noopener noreferrer">
                             Read full case study <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </a>
@@ -748,7 +790,7 @@
                 <a href="mailto:subodh.24fd@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
-        <div class="footer-bottom"><p>&copy; 2026 Subodh Kumar · AI / ML Engineer. Designed &amp; built from scratch.</p></div>
+        <div class="footer-bottom"><p>&copy; <span id="footer-year">2026</span> Subodh Kumar · AI / ML Engineer. Designed &amp; built from scratch.</p></div>
     </footer>
 
     <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>

@@ -25,55 +25,64 @@ const PARTIALS = join(SRC, "partials");
 const read = (p) => readFileSync(p, "utf8");
 
 /* ---------- projects grid ---------- */
+const CATEGORIES = {
+  genai:   { label: "Gen AI",  cls: "cat-genai" },
+  ml:      { label: "ML",      cls: "cat-ml" },
+  backend: { label: "Backend", cls: "cat-backend" },
+};
+
 function renderProject(p) {
   const indent = "                ";
+  const cat = CATEGORIES[p.category] || { label: p.type, cls: "cat-genai" };
+  const flag = p.featured
+    ? `\n                        <span class="project-flag"><i class="fas fa-star" aria-hidden="true"></i> Flagship</span>`
+    : "";
+
   const media =
     p.media.type === "placeholder"
-      ? `<a class="project-image ph ph-${p.media.variant}" href="${p.cardHref}" target="_blank" rel="noopener noreferrer" aria-label="${p.cardAria}">
-                        <span class="ph-badge">${p.media.badge}</span>
+      ? `<a class="project-image ph ph-${p.media.variant}" href="${p.cardHref}" target="_blank" rel="noopener noreferrer" aria-label="${p.cardAria}">${flag}
                         <div class="ph-dots" aria-hidden="true"></div>
                         <i class="${p.media.icon} ph-icon" aria-hidden="true"></i>
                         <div class="project-overlay" aria-hidden="true">
                             <span><i class="${p.overlay.icon}"></i> ${p.overlay.label}</span>
                         </div>
                     </a>`
-      : `<a class="project-image" href="${p.cardHref}" target="_blank" rel="noopener noreferrer" aria-label="${p.cardAria}">
+      : `<a class="project-image" href="${p.cardHref}" target="_blank" rel="noopener noreferrer" aria-label="${p.cardAria}">${flag}
                         <img src="${p.media.src}" alt="${p.media.alt}" loading="lazy" width="${p.media.width}" height="${p.media.height}">
                         <div class="project-overlay" aria-hidden="true">
                             <span><i class="${p.overlay.icon}"></i> ${p.overlay.label}</span>
                         </div>
                     </a>`;
 
-  const stats = p.stats
+  // Flagships get a headline stat row + more chips; standard cards stay lean.
+  const chipLimit = p.featured ? 6 : 4;
+  const chips = p.chips
+    ? `
+                        <div class="project-service-chips">
+                            ${p.chips.slice(0, chipLimit).map((c) => `<span>${c}</span>`).join("")}
+                        </div>`
+    : "";
+
+  const stats = (p.featured && p.stats)
     ? `
                         <div class="project-stats">
                             ${p.stats
-                              .map(
-                                (s) =>
-                                  `<span><i class="${s.icon}" aria-hidden="true"></i> ${s.text}</span>`
-                              )
+                              .map((s) => `<span><i class="${s.icon}" aria-hidden="true"></i> ${s.text}</span>`)
                               .join("\n                            ")}
                         </div>`
     : "";
 
-  const chips = p.chips
-    ? `
-                        <div class="project-service-chips">
-                            ${p.chips.map((c) => `<span>${c}</span>`).join("")}
-                        </div>`
-    : "";
+  const cls = p.featured ? "project-card is-flagship" : "project-card";
 
-  const cls = p.featured ? "project-card project-card-featured" : "project-card";
-
-  return `${indent}<article class="${cls}">
+  return `${indent}<article class="${cls}" data-category="${p.category || "genai"}">
                     ${media}
-                    <div class="project-body${p.featured ? " project-body-with-bg" : ""}">
+                    <div class="project-body">
                         <div class="project-meta">
-                            <span class="project-type">${p.type}</span>
+                            <span class="project-cat ${cat.cls}">${cat.label}</span>
                             <span class="project-tech">${p.tech}</span>
                         </div>
                         <h3>${p.title}</h3>
-                        <p>${p.descHtml}</p>${stats}${chips}
+                        <p class="project-desc">${p.descHtml}</p>${stats}${chips}
                         <a class="project-link" href="${p.link.href}" target="_blank" rel="noopener noreferrer">
                             ${p.link.label} <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </a>
@@ -81,9 +90,20 @@ function renderProject(p) {
                 </article>`;
 }
 
-function renderProjects() {
+function renderProjects(filter) {
   const data = JSON.parse(read(join(SRC, "data", "projects.json")));
-  return data.map(renderProject).join("\n\n");
+  const list =
+    filter === "featured"
+      ? data.filter((p) => p.featured)
+      : filter === "rest"
+      ? data.filter((p) => !p.featured)
+      : data;
+  return list.map(renderProject).join("\n\n");
+}
+
+function projectsCount() {
+  const data = JSON.parse(read(join(SRC, "data", "projects.json")));
+  return `${data.length}+`;
 }
 
 /* ---------- includes ---------- */
@@ -100,7 +120,10 @@ function resolveIncludes(html, seen = new Set()) {
 /* ---------- build ---------- */
 function build() {
   let html = resolveIncludes(read(join(SRC, "layout.html")));
+  html = html.replace(/[ \t]*<!--\s*projects:featured\s*-->/, renderProjects("featured"));
+  html = html.replace(/[ \t]*<!--\s*projects:rest\s*-->/, renderProjects("rest"));
   html = html.replace(/[ \t]*<!--\s*projects:cards\s*-->/, renderProjects());
+  html = html.replace(/<!--\s*projects:count\s*-->/, projectsCount());
   const banner =
     "<!--\n  THIS FILE IS GENERATED — do not edit directly.\n" +
     "  Edit the sources in src/ (partials + data), then run: npm run build\n-->\n";

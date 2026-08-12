@@ -2,6 +2,7 @@
   {
     "featured": true,
     "media": { "type": "placeholder", "variant": "teal", "icon": "fas fa-file-alt", "badge": "Flagship · GenAI" },
+    "category": "genai",
     "cardHref": "https://github.com/ksubodh9/DocIntel-AI-powered-Document-Intelligence",
     "cardAria": "View DocIntel on GitHub",
     "overlay": { "icon": "fab fa-github", "label": "View Repository" },
@@ -19,7 +20,28 @@
     "link": { "href": "https://github.com/ksubodh9/DocIntel-AI-powered-Document-Intelligence", "label": "View repository" }
   },
   {
+    "featured": true,
+    "media": { "type": "placeholder", "variant": "indigo", "icon": "fas fa-robot", "badge": "Flagship · AI Copilot" },
+    "category": "genai",
+    "cardHref": "resources/case-studies/portfolio-laraopscopilot-sanitized.html",
+    "cardAria": "Read the LaraOpsCopilot case study",
+    "overlay": { "icon": "fas fa-arrow-right", "label": "Read Case Study" },
+    "type": "Flagship · AI Operations Copilot",
+    "tech": "FastAPI · FAISS · NL→SQL",
+    "title": "LaraOpsCopilot — AI Operations Copilot",
+    "descHtml": "A drop-in AI operations layer for any Laravel app. Ask in plain English and get answers from three AI agents served by a FastAPI backend: a <strong>Database</strong> agent that turns natural language into guarded, read-only SQL behind a dual AST-based SQL guard and approval flow; a <strong>Log</strong> agent that PII-masks logs, clusters errors by signature, and writes LLM root-cause narratives; and a <strong>Knowledge Base</strong> agent doing chunk → embed → FAISS → cited RAG answers. A swappable LLM/embedding provider abstraction (Anthropic, OpenAI, Gemini, Ollama + offline echo) lets the whole system run and test fully offline. Every action is role-gated and audited.",
+    "stats": [
+      { "icon": "fas fa-shield-halved", "text": "Guarded read-only SQL" },
+      { "icon": "fas fa-robot", "text": "3 AI agents" },
+      { "icon": "fas fa-random", "text": "4+ LLM providers" },
+      { "icon": "fas fa-vial", "text": "40 test files" }
+    ],
+    "chips": ["FastAPI", "RAG", "FAISS", "NL→SQL", "sqlglot", "Log RCA", "OpenAPI", "HMAC", "DDD", "Laravel"],
+    "link": { "href": "resources/case-studies/portfolio-laraopscopilot-sanitized.html", "label": "Read full case study" }
+  },
+  {
     "media": { "type": "image", "src": "assets/img/projects/predictive-maintenance/dashboard.png", "alt": "Industrial equipment predictive maintenance dashboard", "width": 700, "height": 394 },
+    "category": "ml",
     "cardHref": "https://github.com/ksubodh9/AI-Based-Industrial-Equipment-Health-Predictive-Maintenance",
     "cardAria": "View Predictive Maintenance on GitHub",
     "overlay": { "icon": "fab fa-github", "label": "View Repository" },
@@ -31,6 +53,7 @@
   },
   {
     "media": { "type": "image", "src": "assets/img/projects/smart-ai-assistant/chat.png", "alt": "Smart AI Assistant chat widget", "width": 700, "height": 394 },
+    "category": "genai",
     "cardHref": "https://github.com/ksubodh9/smart-ai-assistant",
     "cardAria": "View Smart AI Assistant on GitHub",
     "overlay": { "icon": "fab fa-github", "label": "View Repository" },
@@ -41,18 +64,20 @@
     "link": { "href": "https://github.com/ksubodh9/smart-ai-assistant", "label": "View repository" }
   },
   {
-    "media": { "type": "placeholder", "variant": "indigo", "icon": "fas fa-compass", "badge": "GenAI · RAG" },
+    "media": { "type": "image", "src": "assets/img/projects/GuidoraAI/login.png", "alt": "Guidora AI career guidance platform login screen", "width": 700, "height": 394 },
+    "category": "genai",
     "cardHref": "https://github.com/ksubodh9",
-    "cardAria": "View Career Compass on GitHub",
+    "cardAria": "View Guidora AI on GitHub",
     "overlay": { "icon": "fab fa-github", "label": "View Repository" },
     "type": "AI Recommendation",
     "tech": "FastAPI · FAISS",
-    "title": "Career Compass — Guidance Engine",
+    "title": "Guidora AI",
     "descHtml": "A personalised AI career-guidance platform with a custom RAG pipeline and voice-enabled interaction. FAISS vector retrieval for context-aware responses over a guidance knowledge base, on a scalable FastAPI backend with JWT auth and modular service design.",
     "link": { "href": "https://github.com/ksubodh9", "label": "View repository" }
   },
   {
     "media": { "type": "image", "src": "assets/img/projects/churn-house-price/dashboard.png", "alt": "ML prediction dashboard for churn and house price", "width": 700, "height": 394 },
+    "category": "ml",
     "cardHref": "https://github.com/ksubodh9/Customer-Churn-and-House-Price-Pridiction-Multi-Model-",
     "cardAria": "View Churn and House Price Prediction on GitHub",
     "overlay": { "icon": "fab fa-github", "label": "View Repository" },
@@ -64,6 +89,7 @@
   },
   {
     "media": { "type": "image", "src": "assets/img/projects/walmart/forecast.png", "alt": "Walmart sales time-series forecasting charts", "width": 700, "height": 394 },
+    "category": "ml",
     "cardHref": "https://github.com/ksubodh9/wallmart",
     "cardAria": "View Walmart Sales Forecasting on GitHub",
     "overlay": { "icon": "fab fa-github", "label": "View Repository" },
@@ -75,6 +101,7 @@
   },
   {
     "media": { "type": "image", "src": "assets/img/projects/maddox/home.png", "alt": "MaddoxPay fintech platform dashboard", "width": 700, "height": 394 },
+    "category": "backend",
     "cardHref": "resources/case-studies/portfolio-fintech-platform-sanitized.html",
     "cardAria": "Read MaddoxPay full platform case study",
     "overlay": { "icon": "fas fa-arrow-right", "label": "Read Case Study" },
