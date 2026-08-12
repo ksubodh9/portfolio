@@ -1,7 +1,7 @@
 # Subodh Kumar — Portfolio
 
 Personal portfolio site for **Subodh Kumar, AI / ML Engineer**.
-Live: <https://ksubodh9.github.io/>
+Live: <https://ksubodh9.github.io/portfolio>
 
 It's a static site (deployable as-is to GitHub Pages), but the page is
 **assembled from small section files and a projects data file** so it stays easy
