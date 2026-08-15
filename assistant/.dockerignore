@@ -1,0 +1,9 @@
+# keep the build context small & reproducible
+.venv/
+__pycache__/
+*.pyc
+data/                 # index is rebuilt inside the image
+.fastembed_cache/     # model is downloaded inside the image
+.env                  # never bake secrets into the image
+.git/
+*.md

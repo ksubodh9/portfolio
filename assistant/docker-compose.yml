@@ -1,0 +1,25 @@
+# Local Docker run for the assistant backend.
+#   docker compose up --build        # build + run on http://localhost:8000
+#   docker compose up --build -d     # detached
+# Secrets come from .env (copy from .env.example). Never commit .env.
+services:
+  assistant:
+    build:
+      context: .
+      args:
+        # Use "hashing" for an offline build with no model download.
+        EMBED_BACKEND: bge
+    image: portfolio-assistant:latest
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

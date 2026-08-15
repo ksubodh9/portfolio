@@ -1,0 +1,96 @@
+    <!-- ===== AI COMPANION (bunny) WIDGET =====
+         Talks to the assistant backend (assistant/ — FastAPI /chat SSE + /tts).
+         Set data-api-base to your deployed backend URL (e.g. https://your-api.onrender.com).
+         Left blank, it uses http://localhost:8000 during local dev.
+         The bunny is the assistant's identity and stays present in every mode. -->
+    <div id="assistant-root" data-api-base="">
+
+        <!-- persistent floating bunny launcher (shown when the panel is minimized) -->
+        <button class="asst-fab" id="asstFab" aria-label="Open Subodh's AI companion" aria-expanded="false">
+            <span class="asst-fab-bunny" aria-hidden="true">
+                <svg class="bunny-svg" viewBox="0 0 48 48" fill="none">
+                    <ellipse cx="17" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(-8 17 12)"/>
+                    <ellipse cx="17" cy="12" rx="1.9" ry="7" fill="#22d3ee" transform="rotate(-8 17 12)"/>
+                    <ellipse cx="31" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(8 31 12)"/>
+                    <ellipse cx="31" cy="12" rx="1.9" ry="7" fill="#22d3ee" transform="rotate(8 31 12)"/>
+                    <circle cx="24" cy="30" r="13" fill="#e9eef8"/>
+                    <circle cx="19.6" cy="28.5" r="2.2" fill="#0b1020"/>
+                    <circle cx="28.4" cy="28.5" r="2.2" fill="#0b1020"/>
+                    <circle cx="24" cy="33" r="1.6" fill="#818cf8"/>
+                </svg>
+            </span>
+            <span class="asst-fab-label">Ask the bunny</span>
+        </button>
+
+        <!-- dimmed backdrop for expanded mode -->
+        <div class="asst-backdrop" id="asstBackdrop" hidden></div>
+
+        <section class="asst-panel" id="asstPanel" role="dialog" aria-modal="false" aria-label="Subodh's AI companion" hidden>
+            <header class="asst-head">
+                <div class="asst-avatar" aria-hidden="true">
+                    <svg class="bunny-svg" viewBox="0 0 48 48" fill="none">
+                        <ellipse cx="17" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(-8 17 12)"/>
+                        <ellipse cx="17" cy="12" rx="1.9" ry="7" fill="#22d3ee" transform="rotate(-8 17 12)"/>
+                        <ellipse cx="31" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(8 31 12)"/>
+                        <ellipse cx="31" cy="12" rx="1.9" ry="7" fill="#22d3ee" transform="rotate(8 31 12)"/>
+                        <circle cx="24" cy="30" r="13" fill="#e9eef8"/>
+                        <circle cx="19.6" cy="28.5" r="2.2" fill="#0b1020"/>
+                        <circle cx="28.4" cy="28.5" r="2.2" fill="#0b1020"/>
+                        <circle cx="24" cy="33" r="1.6" fill="#818cf8"/>
+                    </svg>
+                </div>
+                <div class="asst-head-meta">
+                    <strong>Subodh's AI Companion</strong>
+                    <span class="asst-status">
+                        <span class="asst-status-dot" aria-hidden="true"></span>
+                        Grounded in Subodh's portfolio • No guessing
+                        <button class="asst-info" id="asstInfo" type="button" aria-label="About grounding"
+                                title="I only answer from Subodh's real portfolio. If I don't know, I say so instead of guessing.">
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+                <div class="asst-head-controls">
+                    <button class="asst-ctl" id="asstChat" type="button" aria-pressed="true" aria-label="Toggle text chat" title="Text chat">
+                        <i class="fas fa-comment-dots" aria-hidden="true"></i>
+                    </button>
+                    <button class="asst-ctl" id="asstVoice" type="button" aria-pressed="false" aria-label="Toggle voice" title="Voice">
+                        <i class="fas fa-microphone" aria-hidden="true"></i>
+                    </button>
+                    <button class="asst-ctl" id="asstExpand" type="button" aria-pressed="false" aria-label="Expand" title="Expand">
+                        <i class="fas fa-expand" aria-hidden="true"></i>
+                    </button>
+                    <button class="asst-ctl" id="asstClose" type="button" aria-label="Minimize" title="Minimize">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="asst-main">
+                <div class="asst-stage-wrap">
+                    <div class="asst-stage" id="asstStage" aria-hidden="true"></div>
+                    <!-- live subtitle overlay (voice mode): state + transcript/spoken text -->
+                    <div class="asst-caption" id="asstCaption" hidden aria-live="polite"></div>
+                </div>
+
+                <div class="asst-convo">
+                    <div class="asst-body" id="asstBody" aria-live="polite"></div>
+
+                    <footer class="asst-foot" id="asstFoot">
+                <div class="asst-voicebar" id="asstVoiceBar" hidden>
+                    <span class="asst-vstate" id="asstVoiceState"><span class="asst-vstate-dot"></span> Ready</span>
+                    <button class="asst-retry" id="asstRetry" type="button" hidden><i class="fas fa-redo" aria-hidden="true"></i> Retry</button>
+                </div>
+                <div class="asst-input-row" id="asstInputRow">
+                    <button class="asst-mic" id="asstMic" type="button" hidden aria-label="Speak your question">
+                        <i class="fas fa-microphone" aria-hidden="true"></i>
+                    </button>
+                    <textarea class="asst-input" id="asstInput" rows="1" placeholder="Ask about his projects, skills, experience…" aria-label="Ask a question"></textarea>
+                    <button class="asst-send" id="asstSend" aria-label="Send" disabled><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
+                </div>
+                    <p class="asst-foot-note">Grounded in Subodh's portfolio — says <b>"I don't know"</b> rather than guess.</p>
+                    </footer>
+                </div>
+            </div>
+        </section>
+    </div>

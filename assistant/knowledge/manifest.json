@@ -1,0 +1,9 @@
+{
+  "base_url": "https://ksubodh9.github.io/portfolio/",
+  "documents": [
+    { "file": "about.md",       "source": "About",       "section_id": "about",       "url": "https://ksubodh9.github.io/portfolio/#about" },
+    { "file": "experience.md",  "source": "Experience",  "section_id": "experience",  "url": "https://ksubodh9.github.io/portfolio/#experience" },
+    { "file": "skills.md",      "source": "Skills",      "section_id": "skills",      "url": "https://ksubodh9.github.io/portfolio/#skills" },
+    { "file": "projects.md",    "source": "Projects",    "section_id": "projects",    "url": "https://ksubodh9.github.io/portfolio/#projects" }
+  ]
+}

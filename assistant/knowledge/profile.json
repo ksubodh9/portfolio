@@ -1,0 +1,37 @@
+{
+  "name": "Subodh Kumar",
+  "headline": "AI / ML Engineer · GenAI",
+  "tagline": "Building intelligent systems with AI — from model to deployment.",
+  "location": "Greater Noida, India (open to Remote)",
+  "email": "subodh.24fd@gmail.com",
+  "links": {
+    "github": "https://github.com/ksubodh9",
+    "linkedin": "https://www.linkedin.com/in/er-subodh-kumar",
+    "portfolio": "https://ksubodh9.github.io/portfolio/"
+  },
+  "availability": "Open to AI / ML Engineer and GenAI Engineer roles.",
+  "experience_years": 4.5,
+  "one_liner": "AI/ML Engineer turning data into decisions — production RAG pipelines, predictive ML systems, and LLM-powered products on top of a 4.5-year backend engineering foundation.",
+  "focus_areas": [
+    "Retrieval-Augmented Generation (RAG) pipelines with vector search + embeddings",
+    "Multi-LLM orchestration with provider fallback",
+    "Predictive ML with ensemble models and SHAP explainability",
+    "Async FastAPI backends for ML/LLM model serving",
+    "Security-hardened, production-grade AI APIs"
+  ],
+  "top_skills": {
+    "genai": ["RAG pipelines", "FAISS", "Chroma", "vector search", "embeddings", "semantic search", "prompt engineering", "LLM APIs", "multi-LLM orchestration"],
+    "ml": ["scikit-learn", "XGBoost", "Random Forest", "Gradient Boosting", "time-series (ARIMA/SARIMA)", "feature engineering", "SHAP explainability"],
+    "backend": ["FastAPI", "Python", "model serving", "REST APIs", "JWT/JWKS auth", "system design", "security hardening", "Laravel/PHP"],
+    "data": ["PostgreSQL", "MySQL", "pgvector", "Supabase", "query optimization"],
+    "devops": ["Docker", "Git", "Hugging Face Spaces", "Streamlit Cloud", "Vercel", "AWS S3", "MLOps", "LangChain"]
+  },
+  "headline_achievements": [
+    "Built multiple production RAG pipelines with citation-backed generation",
+    "Multi-LLM provider abstraction across Gemini, Groq, OpenAI & Anthropic with automatic fallback",
+    "Cut RAG embedding footprint ~10x (4GB to 400MB) to run on free-tier hardware",
+    "Predictive ML systems at 85%+ accuracy with SHAP explainability",
+    "Shipped fintech backends processing 100K+ monthly transactions and Rs 1M+ daily payouts"
+  ],
+  "current_role": "Product / ML Integration Engineer at Vayam Technologies Ltd. (MaddoxPay Fintech), Aug 2023 – Present"
+}
