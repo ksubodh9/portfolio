@@ -1,3 +1,13 @@
+---
+title: Portfolio Assistant AI
+emoji: 🐰
+colorFrom: yellow
+colorTo: purple
+sdk: docker
+app_port: 8000
+pinned: false
+---
+
 # Portfolio AI Assistant — Backend
 
 Grounded RAG assistant that answers questions about Subodh Kumar using only his real
