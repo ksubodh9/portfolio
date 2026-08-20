@@ -29,12 +29,15 @@
   if (footerYear) footerYear.textContent = new Date().getFullYear();
 
   /* ── Typed tagline ── */
+  var typedStarted = false;
   function initTyped() {
+    if (typedStarted) return;            // defer-time and window.load both call this
     var el = document.getElementById('typed-tagline');
     if (!el || typeof Typed === 'undefined') {
       if (el) el.textContent = 'AI Engineer · ML · Generative AI · RAG Systems';
       return;
     }
+    typedStarted = true;
     new Typed('#typed-tagline', {
       strings: [
         'AI / ML Engineer',

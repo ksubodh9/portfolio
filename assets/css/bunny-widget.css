@@ -1,0 +1,632 @@
+/* ═══════════════════════════════════════════
+   AI COMPANION (bunny) — component styles
+   Every colour, font, radius, shadow and transition below resolves from the
+   tokens in portfolio-ai.css. Load AFTER assistant.css:
+
+     <link href="assets/css/portfolio-ai.css" rel="stylesheet">
+     <link href="assets/css/assistant.css"    rel="stylesheet">
+     <link href="assets/css/bunny-widget.css" rel="stylesheet">
+
+   assistant.css has been pruned to the rules this file does NOT define
+   (sources, actions, feedback, caret, voice-state pill, flash) — there are no
+   duplicate .asst-* blocks fighting by load order.
+
+   State comes from two classes and two attributes, nothing else:
+     #assistant-root   class:       asst-open / asst-expanded
+     #asstStage        data-state:  idle | listening | thinking | speaking | live
+     #asstPanel        data-layout: chat | voice
+═══════════════════════════════════════════ */
+
+/* ---------- 1. launcher — the companion IS the launcher ---------- */
+/* There is no pill and no label any more. Everything visible in the corner is
+   the character itself, its ground shadow, and a soft pool of cyan light. The
+   <button> is just a transparent frame around the bunny; the accessible name
+   lives on it, which is why losing the visible copy costs nothing. */
+.asst-fab {
+  --fab-w: 104px;
+  --fab-h: 132px;
+  position: fixed; right: 20px; bottom: 16px; z-index: 1000;
+  width: var(--fab-w); height: var(--fab-h);
+  display: block; padding: 0; border: 0; background: none;
+  -webkit-appearance: none; appearance: none;
+  cursor: pointer;
+  transition: opacity var(--t), visibility var(--t), transform var(--t);
+}
+
+/* the character, and the negative space it breathes in */
+.asst-fab-bunny {
+  position: absolute; inset: 0 0 10px 0;
+  display: block;
+  transition: transform var(--t);
+  animation: asst-fab-bob 4.2s ease-in-out infinite;
+}
+.asst-fab-ph,
+.asst-fab-stage {
+  position: absolute; inset: 0;
+  /* the render surface is bigger than the button; keep the clickable area the
+     button's own box so the corner doesn't become a large invisible target */
+  pointer-events: none;
+}
+/* Frustum headroom for the ears. The canvas overflows the launcher on three
+   sides — visual only — and the `launcher` camera framing compensates so the
+   bunny does not change size. An upward ear-drag used to cut 16px off the ear
+   tips against this edge. */
+.asst-fab-stage { inset: -30px -22px -10px -22px; }
+
+.asst-fab-ph {
+  display: grid; place-items: center;
+  transition: opacity .55s ease;
+}
+.asst-fab-ph svg {
+  width: 100%; height: 100%; overflow: visible;
+  filter: drop-shadow(0 0 15px color-mix(in srgb, var(--cyan) 26%, transparent));
+}
+
+/* the live rig cross-fades over the SVG once three.js has mounted here */
+.asst-fab-stage { opacity: 0; transition: opacity .6s ease; }
+.asst-fab-stage canvas { display: block; width: 100%; height: 100%; }
+.asst-fab.is-live .asst-fab-ph    { opacity: 0; }
+.asst-fab.is-live .asst-fab-stage { opacity: 1; }
+/* the rig animates its own idle bob — don't stack a CSS one on top of it */
+.asst-fab.is-live .asst-fab-bunny { animation: none; }
+
+/* contact shadow: sells the bunny as standing on the page rather than floating */
+.asst-fab-shadow {
+  position: absolute; left: 50%; bottom: 4px;
+  width: 46%; height: 10px; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%,
+              color-mix(in srgb, var(--cyan) 46%, transparent), transparent 72%);
+  filter: blur(1.5px);
+  transform: translateX(-50%);
+  animation: asst-fab-shadow 4.2s ease-in-out infinite;
+}
+
+.asst-fab:hover .asst-fab-bunny { transform: translateY(-3px) scale(1.045); }
+.asst-fab:active .asst-fab-bunny { transform: translateY(-1px) scale(.99); }
+
+/* the button has no box, so the focus ring needs its own */
+.asst-fab:focus-visible { outline: none; }
+.asst-fab:focus-visible::after {
+  content: ""; position: absolute; inset: -7px;
+  border: 2px solid var(--cyan); border-radius: 20px;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 35%, transparent);
+}
+
+@keyframes asst-fab-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+@keyframes asst-fab-shadow {
+  0%, 100% { transform: translateX(-50%) scaleX(1);   opacity: .8; }
+  50%      { transform: translateX(-50%) scaleX(.84); opacity: .5; }
+}
+
+@media (max-width: 560px) {
+  .asst-fab { --fab-w: 78px; --fab-h: 100px; right: 14px; bottom: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .asst-fab-bunny, .asst-fab-shadow { animation: none; }
+}
+
+/* grab an ear and the bunny follows the cursor — no transition while it is
+   being dragged, or every pointermove would be chasing a 240ms ease */
+.asst-fab { touch-action: none; }
+.asst-fab.is-dragging { transition: none; cursor: grabbing; }
+.asst-fab.is-dragging .asst-fab-bunny { transform: none; }
+
+/* attention bubble. Lives inside the launcher so it travels with him when he
+   is dragged, and inherits the same glass treatment as the panel. */
+.asst-fab-bubble {
+  position: absolute; bottom: calc(100% - 10px); right: 4px;
+  width: max-content; max-width: 210px;
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 34%, transparent);
+  border-radius: 13px 13px 4px 13px;
+  background: linear-gradient(160deg,
+              color-mix(in srgb, var(--surface-2) 96%, transparent),
+              color-mix(in srgb, var(--bg-2) 96%, transparent));
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-md), 0 0 26px color-mix(in srgb, var(--cyan) 16%, transparent);
+  font: 500 0.76rem/1.35 var(--font-head);
+  color: var(--text); text-align: left;
+  opacity: 0; transform: translateY(7px) scale(.93);
+  transform-origin: 100% 100%;
+  transition: opacity .26s ease, transform .36s cubic-bezier(.2, 1.25, .3, 1);
+  pointer-events: none;
+}
+/* when it says "Let's chat?", clicking it should do that — the bubble is a
+   child of the launcher button, so the click opens the panel for free */
+.asst-fab-bubble.is-on { opacity: 1; transform: none; pointer-events: auto; }
+@media (max-width: 560px) { .asst-fab-bubble { max-width: 170px; font-size: 0.72rem; } }
+@media (prefers-reduced-motion: reduce) {
+  .asst-fab-bubble { transition: opacity .2s ease; transform: none; }
+}
+
+/* visibility (not just opacity) so the launcher leaves the tab order too */
+.asst-open .asst-fab { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(0.92); }
+
+/* ---------- 2. shell ---------- */
+.asst-backdrop {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(4, 8, 18, 0.66);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity var(--t);
+}
+.asst-backdrop[hidden] { display: none; }
+.asst-open.asst-expanded .asst-backdrop { opacity: 1; pointer-events: auto; }
+
+.asst-panel {
+  position: fixed; right: 22px; bottom: 22px; z-index: 1001;
+  width: min(404px, calc(100vw - 32px));
+  height: min(660px, calc(100vh - 40px));
+  display: flex; flex-direction: column;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  background: linear-gradient(172deg, var(--surface-2) 0%, var(--bg-2) 100%);
+  box-shadow: var(--shadow-lg), 0 0 50px color-mix(in srgb, var(--cyan) 12%, transparent);
+  overflow: hidden;
+  opacity: 0; transform: translateY(16px) scale(0.985); pointer-events: none;
+  transition: opacity var(--t), transform var(--t), width var(--t), height var(--t);
+}
+.asst-panel[hidden] { display: none; }
+.asst-open .asst-panel { opacity: 1; transform: none; pointer-events: auto; }
+
+.asst-open.asst-expanded .asst-panel {
+  right: auto; bottom: auto; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(1120px, 88vw); height: min(820px, 88vh);
+}
+/* live (duplex) session reads hotter than the rest */
+.asst-panel:has(#asstStage[data-state="live"]) {
+  border-color: color-mix(in srgb, var(--cyan) 26%, transparent);
+  box-shadow: var(--shadow-lg), 0 0 70px color-mix(in srgb, var(--cyan) 20%, transparent);
+}
+
+/* ---------- 3. header + mode switch ---------- */
+.asst-head {
+  flex: none; display: flex; align-items: center; gap: 11px;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cyan) 8%, transparent), transparent);
+}
+.asst-avatar {
+  position: relative; width: 36px; height: 36px; flex: none;
+  border-radius: 50%; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--cyan) 35%, transparent);
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--cyan) 28%, transparent), transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 28%, transparent);
+}
+.asst-avatar > * { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.asst-head-meta {
+  display: flex; flex-direction: column; gap: 3px; min-width: 0; margin-right: auto;
+}
+.asst-head-meta strong {
+  font: 600 0.86rem/1 var(--font-head); letter-spacing: -0.01em; color: var(--text);
+}
+.asst-status {
+  display: flex; align-items: center; gap: 6px;
+  font: 400 0.66rem/1.2 var(--font-mono); letter-spacing: 0.05em; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.asst-status-dot {
+  width: 5px; height: 5px; flex: none; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 8px var(--green);
+}
+.asst-info { background: none; border: 0; padding: 0 2px; color: var(--muted-2); cursor: pointer; }
+.asst-info:hover { color: var(--cyan-2); }
+
+/* segmented 4-mode switch — the whole interaction model in one control */
+.asst-modes {
+  display: flex; align-items: center; gap: 3px; flex: none;
+  padding: 3px; border-radius: var(--r-pill);
+  border: 1px solid var(--line-2); background: var(--elevate);
+}
+.asst-mode {
+  width: 30px; height: 30px; display: grid; place-items: center;
+  border: 1px solid transparent; border-radius: var(--r-pill);
+  background: transparent; color: var(--muted);
+  font-size: 0.78rem; cursor: pointer;
+  transition: color var(--t), background var(--t), border-color var(--t);
+}
+.asst-mode:hover { color: var(--cyan-2); }
+/* Subodh's own icons (assets/img/assistant/icons) are solid black on
+   transparent, so they're used as masks rather than images — that way the
+   glyph inherits currentColor and still reacts to hover / aria-pressed. */
+.asst-ico {
+  width: 17px; height: 17px; display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center;  mask-position: center;
+  -webkit-mask-size: contain;     mask-size: contain;
+}
+[data-icon="chat"] .asst-ico {
+  -webkit-mask-image: url("../img/assistant/icons/comment.png");
+          mask-image: url("../img/assistant/icons/comment.png");
+}
+[data-icon="mic"] .asst-ico {
+  -webkit-mask-image: url("../img/assistant/icons/mic.png");
+          mask-image: url("../img/assistant/icons/mic.png");
+}
+[data-icon="speaker"] .asst-ico {
+  -webkit-mask-image: url("../img/assistant/icons/speaker-filled-audio-tool.png");
+          mask-image: url("../img/assistant/icons/speaker-filled-audio-tool.png");
+}
+[data-icon="wave"] .asst-ico {
+  -webkit-mask-image: url("../img/assistant/icons/wave-sound.png");
+          mask-image: url("../img/assistant/icons/wave-sound.png");
+}
+.asst-mode[aria-pressed="true"] {
+  background: var(--grad-accent);
+  border-color: color-mix(in srgb, var(--cyan) 55%, transparent);
+  color: #06121f;
+}
+.asst-head-controls { display: flex; align-items: center; gap: 4px; flex: none; }
+.asst-ctl {
+  width: 30px; height: 30px; flex: none; display: grid; place-items: center;
+  border: 1px solid var(--line-2); border-radius: var(--r-sm);
+  background: var(--elevate); color: var(--muted);
+  font-size: 0.78rem; cursor: pointer;
+  transition: color var(--t), border-color var(--t);
+}
+.asst-ctl:hover { color: var(--text); border-color: var(--line-strong); }
+
+/* ---------- 4. body layout ---------- */
+.asst-main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+/* docked: bunny is a fixed band above the transcript */
+.asst-stage-wrap {
+  position: relative; flex: none; height: 186px;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+.asst-convo { flex: 1; min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+
+/* voice-first modes: bunny takes the whole body, HUD floats over it */
+.asst-panel[data-layout="voice"] .asst-stage-wrap { flex: 1; height: auto; border-bottom: 0; }
+.asst-panel[data-layout="voice"] .asst-body { display: none; }
+/* transcript is hidden in voice layout, so the composer hugs the bottom
+   instead of leaving the convo column stretched over dead space */
+.asst-panel[data-layout="voice"] .asst-convo { flex: none; }
+
+/* expanded: bunny column beside the transcript column */
+.asst-open.asst-expanded .asst-main { flex-direction: row; }
+.asst-open.asst-expanded .asst-stage-wrap {
+  flex: none; width: 42%; height: auto;
+  border-bottom: 0; border-right: 1px solid var(--line);
+}
+.asst-open.asst-expanded .asst-panel[data-layout="voice"] .asst-stage-wrap { width: 50%; }
+
+/* Expanded has room for both, so the right column keeps the transcript in
+   every mode — a half-empty column next to the bunny reads as broken.
+   (Docked still hides it: there the bunny needs the whole body.) */
+.asst-open.asst-expanded .asst-panel[data-layout="voice"] .asst-body { display: block; }
+.asst-open.asst-expanded .asst-panel[data-layout="voice"] .asst-convo { flex: 1; }
+/* with the transcript visible alongside, the floating duplex bubbles are
+   redundant — and they sit right over the bunny's face. Docked keeps them. */
+.asst-open.asst-expanded .asst-live-lines { display: none; }
+
+/* ---------- 5. holo containment stage ---------- */
+/* .asst-stage keeps hosting the three.js canvas from assistant-avatar.js.
+   The rotating conic rings and the hairline edge circle were removed on
+   request; what remains is the soft bloom plus the two state layers
+   (listening ping, thinking scan). */
+.asst-stage-wrap::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(78% 62% at 50% 44%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 68%),
+    radial-gradient(120% 90% at 50% 118%, color-mix(in srgb, var(--blue) 20%, transparent), transparent 62%);
+}
+.asst-stage { position: absolute; inset: 0; }
+.asst-stage canvas { width: 100% !important; height: 100% !important; display: block; }
+.asst-stage[hidden] { display: none; }
+
+.asst-orb {
+  position: absolute; left: 50%; top: 50%;
+  width: 78%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.asst-orb-glow {
+  position: absolute; inset: -6%; border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--cyan) 20%, transparent), transparent 62%);
+  animation: asst-bloom 3.4s ease-in-out infinite alternate;
+}
+
+/* state layers. The "thinking" scan line was removed on request — the bunny
+   now has a real thinking expression (gaze away, lids lowered, head tilt, ears
+   back), so a sci-fi scanline over its face was saying the same thing twice
+   and worse. Listening keeps a soft ping as the one ambient cue. */
+.asst-orb-ping { position: absolute; opacity: 0;
+  inset: 6%; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--cyan) 75%, transparent);
+}
+#asstStage[data-state="listening"] ~ .asst-orb .asst-orb-ping {
+  opacity: 1; animation: asst-ping 1.9s ease-out infinite;
+}
+#asstStage[data-state="speaking"] ~ .asst-orb .asst-orb-glow,
+#asstStage[data-state="live"] ~ .asst-orb .asst-orb-glow {
+  animation-duration: 1.1s;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--cyan) 34%, transparent), transparent 64%);
+}
+
+/* ---------- 6. glass HUD (voice modes) ---------- */
+/* A pill, not a slab. It used to be a full-width glass panel carrying the
+   whole spoken answer, which duplicated the transcript sitting right next to
+   it and buried the character underneath. Now it hugs its contents at the
+   bottom of the stage and only grows when there is a live line to show. */
+.asst-hud {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  max-width: calc(100% - 28px);
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 8px 13px; border-radius: var(--r-pill);
+  border: 1px solid var(--line-2); background: color-mix(in srgb, var(--bg) 62%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  transition: border-radius var(--t), padding var(--t);
+}
+.asst-hud[hidden] { display: none; }
+/* only while the mic is live does it become a rounded card with a line in it */
+.asst-hud:has(.asst-caption:not(:empty)) {
+  border-radius: var(--r-md); padding: 11px 15px;
+}
+.asst-hud-row { display: flex; align-items: center; gap: 10px; }
+.asst-hud-label {
+  font: 600 0.58rem/1 var(--font-mono);
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan-2);
+  white-space: nowrap;
+}
+.asst-caption {
+  margin: 0; max-width: 34ch;
+  font: 450 0.9rem/1.4 var(--font-body); color: var(--text); text-wrap: pretty;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.asst-caption:empty { display: none; }
+.asst-open.asst-expanded .asst-caption { font-size: 1.05rem; max-width: 44ch; }
+.asst-caption-caret { color: var(--cyan); animation: asst-caret 1s step-end infinite; }
+.asst-stop {
+  padding: 5px 11px; border-radius: var(--r-pill);
+  border: 1px solid var(--line-2); background: var(--elevate);
+  color: var(--muted); font: 500 0.56rem/1 var(--font-mono);
+  letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+}
+.asst-stop:hover { color: var(--text); }
+
+/* waveform — 13 bars mirrored around the centre line, each weighted by a
+   bell envelope (--env) so it reads as a voice print rather than a barcode.
+   --amp is the live level from AssistantVoice.onLevel(); with no audio it
+   falls back to 1 and the bars breathe on their own. */
+.asst-wave {
+  display: flex; align-items: center; justify-content: center;
+  gap: 3px; flex: none; width: 104px; height: 24px;
+}
+.asst-wave i {
+  flex: 1 1 0; min-width: 3px; max-width: 6px; height: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg, var(--cyan-2), var(--blue));
+  transform-origin: center;                       /* grows up AND down */
+  transform: scaleY(calc(var(--env) * var(--amp, 1)));
+  /* The envelope is the bar's ceiling; the animation only breathes between
+     78% and 100% of it, and the phase steps monotonically left-to-right so
+     it reads as one travelling ripple. (Deeper travel + scrambled phase let
+     a short bar out-grow a tall one, which flattened the whole shape.) */
+  animation: asst-wave 1.5s ease-in-out infinite alternate;
+  animation-delay: calc(var(--n) * -0.115s);
+}
+.asst-wave i:nth-child(1)  { --n: 0;  --env: 0.20; }
+.asst-wave i:nth-child(2)  { --n: 1;  --env: 0.32; }
+.asst-wave i:nth-child(3)  { --n: 2;  --env: 0.46; }
+.asst-wave i:nth-child(4)  { --n: 3;  --env: 0.60; }
+.asst-wave i:nth-child(5)  { --n: 4;  --env: 0.74; }
+.asst-wave i:nth-child(6)  { --n: 5;  --env: 0.88; }
+.asst-wave i:nth-child(7)  { --n: 6;  --env: 1.00; }
+.asst-wave i:nth-child(8)  { --n: 7;  --env: 0.88; }
+.asst-wave i:nth-child(9)  { --n: 8;  --env: 0.74; }
+.asst-wave i:nth-child(10) { --n: 9;  --env: 0.60; }
+.asst-wave i:nth-child(11) { --n: 10; --env: 0.46; }
+.asst-wave i:nth-child(12) { --n: 11; --env: 0.32; }
+.asst-wave i:nth-child(13) { --n: 12; --env: 0.20; }
+
+/* only move when there is actually something to hear — a wave thrashing
+   away while idle is just noise. Idle holds the static silhouette. */
+#asstStage[data-state="idle"] ~ .asst-hud .asst-wave i { animation: none; }
+
+/* ---------- 7. duplex bubbles (voice ↔ voice) ---------- */
+.asst-live-lines {
+  position: absolute; left: 0; right: 0; bottom: 92px;
+  display: flex; flex-direction: column; gap: 10px; padding: 0 16px;
+  pointer-events: none;
+}
+.asst-live-lines[hidden] { display: none; }
+.asst-open.asst-expanded .asst-live-lines { bottom: 118px; padding: 0 56px; gap: 14px; }
+.asst-live-line {
+  max-width: 80%; padding: 8px 13px;
+  font: 450 0.88rem/1.4 var(--font-body); color: var(--text-2);
+  animation: asst-rise 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.asst-open.asst-expanded .asst-live-line { max-width: 54%; padding: 12px 18px; font-size: 1.25rem; }
+.asst-live-line.is-user {
+  align-self: flex-end; border-radius: var(--r-md) var(--r-md) 4px var(--r-md);
+  background: color-mix(in srgb, var(--cyan) 14%, transparent); border: 1px solid color-mix(in srgb, var(--cyan) 24%, transparent);
+}
+.asst-live-line.is-bot {
+  align-self: flex-start; border-radius: var(--r-md) var(--r-md) var(--r-md) 4px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent); border: 1px solid var(--line-2);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: var(--text); font-weight: 500;
+}
+
+/* ---------- 8. transcript ---------- */
+.asst-body { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 16px; }
+.asst-body[hidden] { display: none; }
+.asst-open.asst-expanded .asst-body { padding: 26px 34px; }
+.asst-msg { display: flex; gap: 10px; margin-bottom: 14px; max-width: 100%; }
+.asst-msg-avatar {
+  width: 26px; height: 26px; flex: none; border-radius: 50%; overflow: hidden;
+  display: grid; place-items: center; font-size: 0.7rem; color: var(--blue-2);
+  border: 1px solid color-mix(in srgb, var(--cyan) 30%, transparent);
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--cyan) 25%, transparent), transparent 70%);
+}
+.asst-bubble {
+  padding: 11px 14px; border-radius: var(--r-md);
+  font: 450 0.88rem/1.55 var(--font-body); color: var(--text-2); text-wrap: pretty;
+  white-space: pre-wrap; word-wrap: break-word; min-width: 0;
+}
+.asst-msg.is-bot .asst-bubble {
+  background: var(--grad-card); border: 1px solid var(--line);
+  border-top-left-radius: 4px;
+}
+.asst-msg.is-user { flex-direction: row-reverse; }
+.asst-msg.is-user .asst-msg-avatar {
+  border-color: color-mix(in srgb, var(--blue) 30%, transparent);
+  background: color-mix(in srgb, var(--blue) 18%, transparent);
+}
+.asst-msg.is-user .asst-bubble {
+  background: color-mix(in srgb, var(--cyan) 12%, transparent); border: 1px solid color-mix(in srgb, var(--cyan) 22%, transparent);
+  border-top-right-radius: 4px; color: var(--text);
+}
+.asst-typing { display: flex; gap: 4px; padding: 13px 14px; }
+.asst-typing i {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--cyan);
+  animation: asst-breathe 1s ease-in-out infinite alternate;
+}
+.asst-typing i:nth-child(2) { animation-delay: 0.16s; }
+.asst-typing i:nth-child(3) { animation-delay: 0.32s; }
+
+/* suggestion pills — one line each, never wrapping mid-phrase */
+.asst-suggest { display: flex; flex-wrap: wrap; gap: 7px; margin: 4px 0 8px 36px; }
+.asst-chip {
+  padding: 8px 13px; border-radius: var(--r-pill);
+  border: 1px solid var(--line-2); background: var(--elevate);
+  color: var(--muted); font: 500 0.7rem/1 var(--font-body);
+  white-space: nowrap; cursor: pointer; transition: color var(--t), border-color var(--t);
+}
+.asst-chip:hover { color: var(--cyan-2); border-color: color-mix(in srgb, var(--cyan) 40%, transparent); }
+
+/* ---------- 9. composer ---------- */
+.asst-foot {
+  flex: none; display: flex; flex-direction: column; gap: 10px;
+  padding: 14px 16px 16px; border-top: 1px solid var(--line);
+}
+.asst-open.asst-expanded .asst-foot { padding: 18px 34px 22px; }
+.asst-input-row { display: flex; gap: 9px; }
+.asst-input-row[hidden] { display: none; }
+/* In the mic modes this button is the primary control, so it reads as an
+   available action rather than a grey ghost — but stays outlined so it does
+   not compete with the filled SEND beside it. */
+.asst-mic {
+  width: 44px; height: 44px; flex: none; display: grid; place-items: center;
+  border: 1px solid color-mix(in srgb, var(--cyan) 42%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--cyan) 9%, transparent);
+  color: var(--cyan-2); cursor: pointer;
+  transition: color var(--t), border-color var(--t), background var(--t);
+}
+.asst-mic:hover { background: color-mix(in srgb, var(--cyan) 18%, transparent); }
+.asst-mic[hidden] { display: none; }
+.asst-mic.is-listening {
+  background: var(--green); border-color: var(--green); color: #06121f;
+  animation: asst-mic-pulse 1.1s ease-in-out infinite;
+}
+.asst-input {
+  flex: 1; min-width: 0; height: 44px; max-height: 96px; padding: 12px 15px;
+  border: 1px solid var(--line-2); border-radius: 12px;
+  background: var(--elevate); color: var(--text);
+  font: 400 0.88rem/1.2 var(--font-body); resize: none;
+}
+.asst-input:focus { outline: none; border-color: color-mix(in srgb, var(--cyan) 45%, transparent); }
+.asst-input::placeholder { color: var(--muted-2); }
+.asst-send {
+  height: 44px; padding: 0 16px; border: 0; border-radius: 12px;
+  background: var(--grad-accent); color: #06121f;
+  font: 600 0.68rem/1 var(--font-mono);
+  letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--cyan) 24%, transparent);
+  transition: opacity var(--t), transform var(--t);
+}
+.asst-send:disabled { opacity: 0.45; box-shadow: none; cursor: default; transform: none; }
+.asst-send:not(:disabled):hover { transform: translateY(-1px); }
+.asst-foot-note {
+  margin: 0; font: 400 0.62rem/1.4 var(--font-mono);
+  letter-spacing: 0.06em; color: var(--muted-2);
+}
+
+/* big round mic/stop for voice modes */
+.asst-voicebar { display: flex; align-items: center; gap: 14px; }
+.asst-voicebar[hidden] { display: none; }
+.asst-orb-btn {
+  width: 52px; height: 52px; flex: none; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: var(--grad-accent); color: #06121f;
+  font-size: 1.05rem; cursor: pointer;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--cyan) 10%, transparent), 0 12px 30px color-mix(in srgb, var(--cyan) 28%, transparent);
+  transition: transform var(--t);
+}
+.asst-orb-btn:hover { transform: translateY(-1px); }
+.asst-orb-btn.is-listening { animation: asst-mic-pulse 1.1s ease-in-out infinite; }
+.asst-end {
+  height: 44px; padding: 0 14px; border-radius: var(--r-sm);
+  border: 1px solid rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.12);
+  color: #f87171; font: 600 0.6rem/1 var(--font-mono);
+  letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+}
+.asst-end[hidden] { display: none; }
+
+/* ---------- 10. motion ---------- */
+@keyframes asst-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
+@keyframes asst-breathe { from { opacity: 1 } to { opacity: 0.25 } }
+@keyframes asst-bloom { from { opacity: 0.45 } to { opacity: 0.9 } }
+@keyframes asst-ping {
+  0% { transform: scale(0.72); opacity: 0.55 }
+  100% { transform: scale(1.22); opacity: 0 }
+}
+@keyframes asst-wave {
+  from { transform: scaleY(calc(var(--env) * var(--amp, 1) * 0.78)) }
+  to   { transform: scaleY(calc(var(--env) * var(--amp, 1))) }
+}
+@keyframes asst-caret { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+@keyframes asst-rise {
+  from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none }
+}
+@keyframes asst-mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 50%, transparent) }
+  50%      { box-shadow: 0 0 0 7px color-mix(in srgb, var(--green) 0%, transparent) }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asst-fab, .asst-panel, .asst-backdrop, .asst-mode, .asst-ctl,
+  .asst-mic, .asst-send, .asst-orb-btn { transition: none; }
+  .asst-fab-bunny, .asst-fab-shadow, .asst-orb-glow,
+  .asst-orb-ping, .asst-wave i, .asst-typing i,
+  .asst-live-line, .asst-caption-caret, .asst-mic.is-listening,
+  .asst-orb-btn.is-listening { animation: none !important; }
+  /* keep the listening / thinking cues legible, just hold them still
+     instead of hiding them — they are the only on-stage state signal */
+  #asstStage[data-state="listening"] ~ .asst-orb .asst-orb-ping { opacity: 1 !important; }
+}
+
+/* ---------- 11. mobile ---------- */
+@media (max-width: 560px) {
+  .asst-panel {
+    right: 8px; left: 8px; bottom: 8px;
+    width: auto; height: min(88vh, 680px);
+  }
+  .asst-open.asst-expanded .asst-panel {
+    left: 8px; top: 8px; right: 8px; bottom: 8px;
+    transform: none; width: auto; height: auto;
+  }
+  .asst-open.asst-expanded .asst-main { flex-direction: column; }
+  .asst-open.asst-expanded .asst-stage-wrap,
+  .asst-open.asst-expanded .asst-panel[data-layout="voice"] .asst-stage-wrap {
+    width: auto; height: 200px; flex: none;
+    border-right: 0; border-bottom: 1px solid var(--line);
+  }
+  .asst-open.asst-expanded .asst-panel[data-layout="voice"] .asst-stage-wrap { flex: 1; height: auto; }
+  .asst-head-meta .asst-status { display: none; }
+  .asst-open.asst-expanded .asst-live-lines { padding: 0 16px; bottom: 92px; }
+  .asst-open.asst-expanded .asst-live-line { max-width: 82%; font-size: 0.95rem; padding: 9px 14px; }
+  .asst-open.asst-expanded .asst-caption { font-size: 1.05rem; }
+  .asst-open.asst-expanded .asst-body,
+  .asst-open.asst-expanded .asst-foot { padding-left: 16px; padding-right: 16px; }
+
+  /* ≥44px hit targets on touch */
+  .asst-modes { gap: 2px; padding: 2px; }
+  .asst-mode, .asst-ctl { width: 44px; height: 44px; font-size: 0.9rem; }
+  .asst-stop { min-height: 44px; padding: 5px 14px; }
+}

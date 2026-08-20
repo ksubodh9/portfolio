@@ -12,8 +12,12 @@
    Both stream sentence-by-sentence so speech starts while the answer is still
    generating. Public API (stable across engines):
      setEnabled / isEnabled / isSpeaking / reset / feed / flush / cancel
-     onState(fn:bool) / onBoundary(fn) / onLevel(fn:0..1)
+     onState(fn:bool) / onBoundary(fn) / onLevel(fn:0..1) / onPhoneme(fn:string)
    onLevel emits a precise mouth-openness signal during ElevenLabs playback.
+   onPhoneme emits the text currently being voiced — a single character on the
+   ElevenLabs path (from the character alignment) or the whole word on the
+   browser path (from boundary events). The avatar turns it into visemes so the
+   mouth forms sounds instead of flapping with the volume.
 ═══════════════════════════════════════════ */
 (function () {
   "use strict";
@@ -33,6 +37,7 @@
     var onState = function () {};
     var onBoundary = function () {};
     var onLevel = function () {};
+    var onPhoneme = function () {};
 
     /* ---------- shared: sentence extraction ---------- */
     function reset() {
@@ -255,18 +260,29 @@
       var align = job.align;
       var level = 0;
       var ptr = 0;
+      // which alignment character was last emitted as a viseme. Undeclared here
+      // it threw a ReferenceError under "use strict" on the first frame, which
+      // killed the rAF loop and froze the mouth for the whole ElevenLabs path.
+      var lastPtr = -1;
       function step() {
         if (!audioEl) return;
         var target;
         var a = srcNode ? rms() : null;
+        var spoken = null;
+        if (align && align.starts.length) {
+          var t = audioEl.currentTime;
+          while (ptr < align.starts.length - 1 && align.starts[ptr + 1] <= t) ptr++;
+          while (ptr > 0 && align.starts[ptr] > t) ptr--;
+          if (ptr !== lastPtr) {
+            lastPtr = ptr;
+            spoken = align.chars[ptr];
+          }
+        }
         if (a != null) {
           // real amplitude -> mouth openness (gain + soft knee), audio-reactive
           target = Math.min(1, a * 3.4);
         } else if (align && align.starts.length) {
           // no Web Audio -> character-timed openness from alignment
-          var t = audioEl.currentTime;
-          while (ptr < align.starts.length - 1 && align.starts[ptr + 1] <= t) ptr++;
-          while (ptr > 0 && align.starts[ptr] > t) ptr--;
           target = align.open[ptr] || 0;
         } else {
           target = 0.3 + Math.abs(Math.sin(audioEl.currentTime * 12)) * 0.5;
@@ -277,6 +293,11 @@
         try {
           onLevel(level);
         } catch (e) {}
+        if (spoken != null) {
+          try {
+            onPhoneme(spoken);
+          } catch (e) {}
+        }
         lipRaf = requestAnimationFrame(step);
       }
       lipRaf = requestAnimationFrame(step);
@@ -346,12 +367,18 @@
         return;
       }
       setSpeaking(true);
-      var u = new SpeechSynthesisUtterance(bQueue.shift());
+      var text = bQueue.shift();
+      var u = new SpeechSynthesisUtterance(text);
       if (bVoice) u.voice = bVoice;
       u.rate = 1.03;
       u.onboundary = function (e) {
         try {
           onBoundary({ charIndex: e.charIndex, name: e.name });
+        } catch (err) {}
+        try {
+          var rest = text.slice(e.charIndex);
+          var word = /^[^\s]+/.exec(rest);
+          if (word) onPhoneme(word[0]);
         } catch (err) {}
       };
       u.onend = u.onerror = browserNext;
@@ -421,6 +448,9 @@
       },
       onLevel: function (fn) {
         onLevel = fn || function () {};
+      },
+      onPhoneme: function (fn) {
+        onPhoneme = fn || function () {};
       },
     };
   }

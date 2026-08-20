@@ -93,8 +93,21 @@ _hits: dict[str, deque] = defaultdict(deque)
 _day = {"date": time.strftime("%Y-%m-%d"), "count": 0}
 
 
+def _sweep_hits(now: float) -> None:
+    """Drop IP buckets with no hits in the last minute.
+
+    Without this, `_hits` accumulates one deque per unique client IP for the
+    lifetime of the process — a slow leak on a public endpoint.
+    """
+    stale = [k for k, v in _hits.items() if not v or now - v[-1] > 60]
+    for k in stale:
+        _hits.pop(k, None)
+
+
 def _rate_limited(ip: str) -> str | None:
     now = time.time()
+    if len(_hits) > 512:
+        _sweep_hits(now)
     dq = _hits[ip]
     while dq and now - dq[0] > 60:
         dq.popleft()

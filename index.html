@@ -15,15 +15,15 @@
     <meta name="keywords" content="Subodh Kumar, AI Engineer, Machine Learning Engineer, Generative AI Engineer, GenAI, RAG Developer, FastAPI Developer, Data Scientist, LLM, Vector Database, FAISS, Embeddings, Semantic Search, Predictive Analytics, Backend Engineer, Python, scikit-learn, XGBoost, NL2SQL, AI Agents, AI Safety, OpenAPI, Hexagonal Architecture, DDD">
     <meta name="author" content="Subodh Kumar">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://ksubodh9.github.io/">
+    <link rel="canonical" href="https://ksubodh9.github.io/portfolio/">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Subodh Kumar — AI/ML Engineer">
     <meta property="og:title" content="Subodh Kumar | AI / ML Engineer · Generative AI &amp; RAG Systems">
     <meta property="og:description" content="Production RAG pipelines, FastAPI model serving, predictive ML, and vector search — built on a strong backend engineering foundation.">
-    <meta property="og:image" content="https://ksubodh9.github.io/assets/img/og-cover.jpg">
-    <meta property="og:url" content="https://ksubodh9.github.io/">
+    <meta property="og:image" content="https://ksubodh9.github.io/portfolio/assets/img/og-cover.jpg">
+    <meta property="og:url" content="https://ksubodh9.github.io/portfolio/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Subodh Kumar | AI / ML Engineer · GenAI &amp; RAG">
     <meta name="twitter:description" content="AI Engineer building intelligent systems — RAG, LLMs, predictive ML, FastAPI, vector databases.">
@@ -36,7 +36,7 @@
       "name": "Subodh Kumar",
       "jobTitle": "AI / ML Engineer",
       "email": "mailto:subodh.24fd@gmail.com",
-      "url": "https://ksubodh9.github.io/",
+      "url": "https://ksubodh9.github.io/portfolio/",
       "sameAs": [
         "https://github.com/ksubodh9",
         "https://www.linkedin.com/in/er-subodh-kumar/"
@@ -53,6 +53,7 @@
     <link href="assets/css/portfolio-ai.css" rel="stylesheet">
     <link href="assets/css/portfolio-legacy-theme.css" rel="stylesheet">
     <link href="assets/css/assistant.css" rel="stylesheet">
+    <link href="assets/css/bunny-widget.css" rel="stylesheet">
     <link rel="icon" href="assets/img/favicon.png">
 </head>
 <body>
@@ -796,16 +797,122 @@
 
     <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
 
-    <!-- ===== AI COMPANION (bunny) WIDGET =====
-         Talks to the assistant backend (assistant/ — FastAPI /chat SSE + /tts).
-         Set data-api-base to your deployed backend URL (e.g. https://your-api.onrender.com).
-         Left blank, it uses http://localhost:8000 during local dev.
-         The bunny is the assistant's identity and stays present in every mode. -->
-    <div id="assistant-root" data-api-base="">
+<!-- ═══════════════════════════════════════════
+     AI COMPANION (bunny) WIDGET — markup partial
+     Talks to the assistant backend (assistant/ — FastAPI /chat SSE + /tts).
 
-        <!-- persistent floating bunny launcher (shown when the panel is minimized) -->
-        <button class="asst-fab" id="asstFab" aria-label="Open Subodh's AI companion" aria-expanded="false">
-            <span class="asst-fab-bunny" aria-hidden="true">
+     GOING LIVE — one line, here:  set data-api-base on #assistant-root to the
+     deployed backend origin, e.g. data-api-base="https://subodh-assistant.onrender.com",
+     then run `npm run build`. The backend's ALLOWED_ORIGINS must include
+     https://ksubodh9.github.io (origin only, no path).
+     Left blank on localhost it auto-targets http://localhost:8000; left blank on a
+     public host the widget shows a graceful "companion is offline" message.
+
+     The launcher and the panel stage share ONE avatar instance: it lives in
+     #asstFabStage while the panel is closed and relocates into #asstStage on
+     open (assistant.js -> moveAvatar / avatar.remount).
+
+     State model is two attributes plus two classes, nothing else:
+       #assistant-root   class:       asst-open / asst-expanded
+       #asstStage        data-state:  idle | listening | thinking | speaking | live
+       #asstPanel        data-layout: chat (transcript-led) | voice (bunny-led)
+
+     The three.js bunny (assistant-avatar.js) mounts into #asstStage; the
+     bloom and listening ping are CSS siblings around it.
+═══════════════════════════════════════════ -->
+<div id="assistant-root" data-api-base="">
+
+    <!-- The companion IS the launcher. No pill, no label, no chrome: a full-body
+         bunny standing in the corner, with the accessible name on the button.
+         #asstFabPh is the inline full-body SVG shown immediately; #asstFabStage
+         receives the live three.js rig once it loads and cross-fades in. -->
+    <button class="asst-fab" id="asstFab" aria-expanded="false"
+            aria-label="Open Subodh's AI companion — ask about his projects, skills and experience"
+            title="Ask my AI companion">
+        <span class="asst-fab-bunny" aria-hidden="true">
+            <span class="asst-fab-ph" id="asstFabPh">
+            <svg class="bunny-svg bunny-full" viewBox="0 0 48 70" fill="none" role="img" aria-hidden="true">
+              <defs>
+                <radialGradient id="bnGloss" cx="34%" cy="26%" r="62%">
+                  <stop offset="0" stop-color="#ffffff" stop-opacity=".85"/>
+                  <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="bnFur" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f4f7fd"/>
+                  <stop offset="1" stop-color="#dde4f2"/>
+                </linearGradient>
+              </defs>
+
+              <!-- ═══ BODY — drawn first so the head overlaps it and the join reads
+                   neckless, exactly like the three.js rig (torso top tucks under the
+                   skull). Torso half-width is 0.57× the head's, so it supports the face
+                   instead of competing with it. ═══ -->
+
+              <!-- legs + feet (behind the torso, so the torso covers where they meet) -->
+              <g fill="url(#bnFur)">
+                <ellipse cx="20.8" cy="59.8" rx="2.45" ry="2.7"/>
+                <ellipse cx="27.2" cy="59.8" rx="2.45" ry="2.7"/>
+                <ellipse cx="20.1" cy="63.6" rx="3.3" ry="2.15" transform="rotate(-6 20.1 63.6)"/>
+                <ellipse cx="27.9" cy="63.6" rx="3.3" ry="2.15" transform="rotate(6 27.9 63.6)"/>
+              </g>
+
+              <!-- compact rounded torso -->
+              <ellipse cx="24" cy="50.2" rx="7.4" ry="8.6" fill="url(#bnFur)"/>
+              <ellipse cx="21.2" cy="46.4" rx="2.5" ry="3.2" fill="#ffffff" opacity=".38"/>
+
+              <!-- cyan power mark on the chest: open ring + stem through the gap -->
+              <g stroke="#22d3ee" stroke-width=".92" stroke-linecap="round" fill="none">
+                <circle cx="24" cy="50.8" r="2.5" stroke-dasharray="12.2 3.6" transform="rotate(-50 24 50.8)"/>
+                <path d="M24 47.7v2.3"/>
+              </g>
+
+              <!-- short mitten arms, hung just outside the torso silhouette -->
+              <g fill="url(#bnFur)">
+                <ellipse cx="15.9" cy="47.4" rx="1.95" ry="3.5" transform="rotate(9 15.9 47.4)"/>
+                <ellipse cx="15.3" cy="51.4" rx="2.25" ry="2.05"/>
+                <ellipse cx="32.1" cy="47.4" rx="1.95" ry="3.5" transform="rotate(-9 32.1 47.4)"/>
+                <ellipse cx="32.7" cy="51.4" rx="2.25" ry="2.05"/>
+              </g>
+
+              <!-- ═══ HEAD — geometry unchanged from the original mark: same ear
+                   ellipses and rotations, same skull circle, same eye and nose
+                   positions. This is the identity and it is not redrawn. ═══ -->
+
+              <ellipse cx="17" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(-8 17 12)"/>
+              <ellipse cx="17" cy="12" rx="1.9" ry="7"  fill="#22d3ee" transform="rotate(-8 17 12)"/>
+              <ellipse cx="31" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(8 31 12)"/>
+              <ellipse cx="31" cy="12" rx="1.9" ry="7"  fill="#22d3ee" transform="rotate(8 31 12)"/>
+
+              <circle cx="24" cy="30" r="13" fill="#e9eef8"/>
+              <ellipse cx="19.5" cy="24.5" rx="6.4" ry="4.6" fill="url(#bnGloss)" transform="rotate(-22 19.5 24.5)"/>
+
+              <!-- soft cheeks -->
+              <ellipse cx="17.4" cy="32.6" rx="2.7" ry="1.8" fill="#22d3ee" opacity=".12"/>
+              <ellipse cx="30.6" cy="32.6" rx="2.7" ry="1.8" fill="#22d3ee" opacity=".12"/>
+
+              <circle cx="19.6" cy="28.5" r="2.2" fill="#0b1020"/>
+              <circle cx="28.4" cy="28.5" r="2.2" fill="#0b1020"/>
+              <circle cx="20.35" cy="27.7" r=".72" fill="#ffffff" opacity=".9"/>
+              <circle cx="29.15" cy="27.7" r=".72" fill="#ffffff" opacity=".9"/>
+
+              <circle cx="24" cy="33" r="1.6" fill="#818cf8"/>
+              <path d="M22.3 34.9q1.7 1.5 3.4 0" stroke="#5b6488" stroke-width=".62"
+                    stroke-linecap="round" fill="none" opacity=".65"/>
+            </svg>
+            </span>
+            <span class="asst-fab-stage" id="asstFabStage"></span>
+        </span>
+        <span class="asst-fab-shadow" aria-hidden="true"></span>
+    </button>
+
+    <!-- dimmed backdrop for expanded mode -->
+    <div class="asst-backdrop" id="asstBackdrop" hidden></div>
+
+    <section class="asst-panel" id="asstPanel" data-layout="chat" role="dialog" aria-modal="false"
+             aria-label="Subodh's AI companion" hidden>
+
+        <header class="asst-head">
+            <div class="asst-avatar" aria-hidden="true">
                 <svg class="bunny-svg" viewBox="0 0 48 48" fill="none">
                     <ellipse cx="17" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(-8 17 12)"/>
                     <ellipse cx="17" cy="12" rx="1.9" ry="7" fill="#22d3ee" transform="rotate(-8 17 12)"/>
@@ -816,87 +923,117 @@
                     <circle cx="28.4" cy="28.5" r="2.2" fill="#0b1020"/>
                     <circle cx="24" cy="33" r="1.6" fill="#818cf8"/>
                 </svg>
-            </span>
-            <span class="asst-fab-label">Ask the bunny</span>
-        </button>
+            </div>
 
-        <!-- dimmed backdrop for expanded mode -->
-        <div class="asst-backdrop" id="asstBackdrop" hidden></div>
+            <div class="asst-head-meta">
+                <strong>Bunny</strong>
+                <span class="asst-status">
+                    <span class="asst-status-dot" aria-hidden="true"></span>
+                    <span id="asstStatusText">grounded · cites its sources</span>
+                    <button class="asst-info" id="asstInfo" type="button" aria-label="About grounding"
+                            title="I only answer from Subodh's real portfolio. If I don't know, I say so instead of guessing.">
+                        <i class="fas fa-info-circle" aria-hidden="true"></i>
+                    </button>
+                </span>
+            </div>
 
-        <section class="asst-panel" id="asstPanel" role="dialog" aria-modal="false" aria-label="Subodh's AI companion" hidden>
-            <header class="asst-head">
-                <div class="asst-avatar" aria-hidden="true">
-                    <svg class="bunny-svg" viewBox="0 0 48 48" fill="none">
-                        <ellipse cx="17" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(-8 17 12)"/>
-                        <ellipse cx="17" cy="12" rx="1.9" ry="7" fill="#22d3ee" transform="rotate(-8 17 12)"/>
-                        <ellipse cx="31" cy="12" rx="4.2" ry="10" fill="#e9eef8" transform="rotate(8 31 12)"/>
-                        <ellipse cx="31" cy="12" rx="1.9" ry="7" fill="#22d3ee" transform="rotate(8 31 12)"/>
-                        <circle cx="24" cy="30" r="13" fill="#e9eef8"/>
-                        <circle cx="19.6" cy="28.5" r="2.2" fill="#0b1020"/>
-                        <circle cx="28.4" cy="28.5" r="2.2" fill="#0b1020"/>
-                        <circle cx="24" cy="33" r="1.6" fill="#818cf8"/>
-                    </svg>
-                </div>
-                <div class="asst-head-meta">
-                    <strong>Subodh's AI Companion</strong>
-                    <span class="asst-status">
-                        <span class="asst-status-dot" aria-hidden="true"></span>
-                        Grounded in Subodh's portfolio • No guessing
-                        <button class="asst-info" id="asstInfo" type="button" aria-label="About grounding"
-                                title="I only answer from Subodh's real portfolio. If I don't know, I say so instead of guessing.">
-                            <i class="fas fa-info-circle" aria-hidden="true"></i>
-                        </button>
-                    </span>
-                </div>
-                <div class="asst-head-controls">
-                    <button class="asst-ctl" id="asstChat" type="button" aria-pressed="true" aria-label="Toggle text chat" title="Text chat">
-                        <i class="fas fa-comment-dots" aria-hidden="true"></i>
-                    </button>
-                    <button class="asst-ctl" id="asstVoice" type="button" aria-pressed="false" aria-label="Toggle voice" title="Voice">
-                        <i class="fas fa-microphone" aria-hidden="true"></i>
-                    </button>
-                    <button class="asst-ctl" id="asstExpand" type="button" aria-pressed="false" aria-label="Expand" title="Expand">
-                        <i class="fas fa-expand" aria-hidden="true"></i>
-                    </button>
-                    <button class="asst-ctl" id="asstClose" type="button" aria-label="Minimize" title="Minimize">
-                        <i class="fas fa-times" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </header>
+            <!-- the four interaction modes, always visible -->
+            <div class="asst-modes" role="group" aria-label="Interaction mode">
+                <button class="asst-mode" data-icon="chat" id="asstChat" type="button" aria-pressed="true"
+                        aria-label="Text to text" title="Text → text">
+                    <span class="asst-ico" aria-hidden="true"></span>
+                </button>
+                <button class="asst-mode" data-icon="mic" id="asstVoice" type="button" aria-pressed="false"
+                        aria-label="Voice to text" title="Voice → text">
+                    <span class="asst-ico" aria-hidden="true"></span>
+                </button>
+                <button class="asst-mode" data-icon="speaker" id="asstSpeak" type="button" aria-pressed="false"
+                        aria-label="Text to voice" title="Text → voice">
+                    <span class="asst-ico" aria-hidden="true"></span>
+                </button>
+                <button class="asst-mode" data-icon="wave" id="asstLive" type="button" aria-pressed="false"
+                        aria-label="Live voice session" title="Voice ↔ voice">
+                    <span class="asst-ico" aria-hidden="true"></span>
+                </button>
+            </div>
 
-            <div class="asst-main">
-                <div class="asst-stage-wrap">
-                    <div class="asst-stage" id="asstStage" aria-hidden="true"></div>
-                    <!-- live subtitle overlay (voice mode): state + transcript/spoken text -->
-                    <div class="asst-caption" id="asstCaption" hidden aria-live="polite"></div>
+            <div class="asst-head-controls">
+                <button class="asst-ctl" id="asstExpand" type="button" aria-pressed="false"
+                        aria-label="Expand" title="Expand / dock">
+                    <i class="fas fa-expand" aria-hidden="true"></i>
+                </button>
+                <button class="asst-ctl" id="asstClose" type="button" aria-label="Minimize" title="Minimize">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="asst-main">
+
+            <!-- stage: three.js canvas mounts into #asstStage,
+                 the bloom + state layers are the CSS siblings after it -->
+            <div class="asst-stage-wrap">
+                <div class="asst-stage" id="asstStage" data-state="idle" aria-hidden="true"></div>
+                <div class="asst-orb" aria-hidden="true">
+                    <span class="asst-orb-glow"></span>
+                    <span class="asst-orb-ping"></span>
                 </div>
 
-                <div class="asst-convo">
-                    <div class="asst-body" id="asstBody" aria-live="polite"></div>
+                <!-- duplex bubbles (voice ↔ voice); one .asst-live-line per turn -->
+                <div class="asst-live-lines" id="asstLiveLines" aria-live="polite" hidden></div>
 
-                    <footer class="asst-foot" id="asstFoot">
-                <div class="asst-voicebar" id="asstVoiceBar" hidden>
-                    <span class="asst-vstate" id="asstVoiceState"><span class="asst-vstate-dot"></span> Ready</span>
-                    <button class="asst-retry" id="asstRetry" type="button" hidden><i class="fas fa-redo" aria-hidden="true"></i> Retry</button>
-                </div>
-                <div class="asst-input-row" id="asstInputRow">
-                    <button class="asst-mic" id="asstMic" type="button" hidden aria-label="Speak your question">
-                        <i class="fas fa-microphone" aria-hidden="true"></i>
-                    </button>
-                    <textarea class="asst-input" id="asstInput" rows="1" placeholder="Ask about his projects, skills, experience…" aria-label="Ask a question"></textarea>
-                    <button class="asst-send" id="asstSend" aria-label="Send" disabled><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
-                </div>
-                    <p class="asst-foot-note">Grounded in Subodh's portfolio — says <b>"I don't know"</b> rather than guess.</p>
-                    </footer>
+                <!-- slim HUD: state + level + stop. It carries a line of text
+                     ONLY while the mic is hot, because that is the one thing
+                     the chat transcript does not already have. -->
+                <div class="asst-hud" id="asstHud" hidden>
+                    <div class="asst-hud-row">
+                        <span class="asst-hud-label" id="asstHudLabel">hearing you</span>
+                        <div class="asst-wave" id="asstWave" aria-hidden="true">
+                            <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                            <i></i><i></i><i></i><i></i><i></i><i></i>
+                        </div>
+                        <button class="asst-stop" id="asstStop" type="button">stop</button>
+                    </div>
+                    <p class="asst-caption" id="asstCaption" aria-live="polite"></p>
                 </div>
             </div>
-        </section>
-    </div>
+
+            <div class="asst-convo">
+                <div class="asst-body" id="asstBody" aria-live="polite"></div>
+
+                <footer class="asst-foot" id="asstFoot">
+                    <div class="asst-voicebar" id="asstVoiceBar" hidden>
+                        <button class="asst-orb-btn" id="asstOrbBtn" type="button" aria-label="Start listening">
+                            <i class="fas fa-microphone" aria-hidden="true"></i>
+                        </button>
+                        <span class="asst-vstate" id="asstVoiceState"><span class="asst-vstate-dot"></span> Ready</span>
+                        <button class="asst-retry" id="asstRetry" type="button" hidden>
+                            <i class="fas fa-redo" aria-hidden="true"></i> Retry
+                        </button>
+                        <button class="asst-end" id="asstEnd" type="button" hidden>end</button>
+                    </div>
+
+                    <div class="asst-input-row" id="asstInputRow">
+                        <button class="asst-mic" id="asstMic" type="button" hidden aria-label="Speak your question">
+                            <i class="fas fa-microphone" aria-hidden="true"></i>
+                        </button>
+                        <textarea class="asst-input" id="asstInput" rows="1"
+                                  placeholder="Ask about a project…" aria-label="Ask a question"></textarea>
+                        <button class="asst-send" id="asstSend" aria-label="Send" disabled>send</button>
+                    </div>
+
+                    <p class="asst-foot-note">answers cite their source — otherwise it says it doesn't know</p>
+                </footer>
+            </div>
+        </div>
+    </section>
+</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js" defer></script>
     <script src="assets/js/portfolio-ai.js" defer></script>
     <script src="assets/js/assistant-voice.js" defer></script>
     <script src="assets/js/assistant-avatar.js" defer></script>
+    <script src="assets/js/assistant-companion.js" defer></script>
     <script src="assets/js/assistant.js" defer></script>
 </body>
 </html>

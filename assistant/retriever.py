@@ -75,10 +75,13 @@ def retrieve(query: str, k: int = 4) -> Retrieval:
         include=["documents", "metadatas", "distances"],
     )
     hits: list[Hit] = []
-    docs = res["documents"][0]
-    metas = res["metadatas"][0]
-    dists = res["distances"][0]
+    # An empty/unbuilt collection returns [[]]; metadatas comes back None when no
+    # metadata was stored. Both used to raise here and 500 the whole turn.
+    docs = (res.get("documents") or [[]])[0] or []
+    metas = (res.get("metadatas") or [[]])[0] or [{}] * len(docs)
+    dists = (res.get("distances") or [[]])[0] or [1.0] * len(docs)
     for doc, meta, dist in zip(docs, metas, dists):
+        meta = meta or {}
         hits.append(
             Hit(
                 text=doc,

@@ -11,3 +11,12 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+
+# Staged for manual deletion (see docs/TECHNICAL.md — cleanup)
+_to_delete/
+
+# Python bytecode (assistant/)
+__pycache__/
+*.pyc
+
+docs
