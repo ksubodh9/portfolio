@@ -104,6 +104,29 @@ def _sweep_hits(now: float) -> None:
         _hits.pop(k, None)
 
 
+def _client_ip(request: Request) -> str:
+    """The visitor's IP, not the proxy's.
+
+    Hosted behind a reverse proxy (HF Spaces, Render, Fly, Cloudflare),
+    `request.client.host` is the PROXY for every visitor — so the per-IP limiter
+    collapses into one global bucket and `RATE_LIMIT_PER_MIN` starts 429-ing
+    real users as soon as there is any concurrent traffic at all.
+
+    X-Forwarded-For is client-controlled and trivially spoofed, so this is a
+    fair-use throttle, not a security control. The left-most entry is the
+    originating client; the proxy appends its own hop on the right.
+    """
+    fwd = request.headers.get("x-forwarded-for", "")
+    if fwd:
+        first = fwd.split(",")[0].strip()
+        if first:
+            return first
+    real = request.headers.get("x-real-ip", "").strip()
+    if real:
+        return real
+    return request.client.host if request.client else "unknown"
+
+
 def _rate_limited(ip: str) -> str | None:
     now = time.time()
     if len(_hits) > 512:
@@ -252,7 +275,7 @@ def tts(req: TTSRequest, request: Request):
     if not TTS_ENABLED:
         return JSONResponse(status_code=503, content={"error": "tts_unconfigured"})
 
-    ip = request.client.host if request.client else "unknown"
+    ip = _client_ip(request)
     if _rate_limited(ip):
         return JSONResponse(status_code=429, content={"error": "rate_limited"})
 
@@ -296,7 +319,7 @@ def tts(req: TTSRequest, request: Request):
 
 @app.post("/chat")
 def chat(req: ChatRequest, request: Request):
-    ip = request.client.host if request.client else "unknown"
+    ip = _client_ip(request)
     limit_msg = _rate_limited(ip)
     if limit_msg:
         return JSONResponse(status_code=429, content={"error": limit_msg})

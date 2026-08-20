@@ -801,10 +801,11 @@
      AI COMPANION (bunny) WIDGET — markup partial
      Talks to the assistant backend (assistant/ — FastAPI /chat SSE + /tts).
 
-     GOING LIVE — one line, here:  set data-api-base on #assistant-root to the
-     deployed backend origin, e.g. data-api-base="https://subodh-assistant.onrender.com",
-     then run `npm run build`. The backend's ALLOWED_ORIGINS must include
-     https://ksubodh9.github.io (origin only, no path).
+     GOING LIVE — set the endpoint in assets/js/assistant-config.js, NOT here.
+     That file is not generated, so pointing at a new backend needs no rebuild.
+     data-api-base below is only a per-page override and stays empty.
+     The backend's ALLOWED_ORIGINS must include https://ksubodh9.github.io
+     (origin only, no path).
      Left blank on localhost it auto-targets http://localhost:8000; left blank on a
      public host the widget shows a graceful "companion is offline" message.
 
@@ -1033,6 +1034,7 @@
     <script src="assets/js/portfolio-ai.js" defer></script>
     <script src="assets/js/assistant-voice.js" defer></script>
     <script src="assets/js/assistant-avatar.js" defer></script>
+    <script src="assets/js/assistant-config.js" defer></script>
     <script src="assets/js/assistant-companion.js" defer></script>
     <script src="assets/js/assistant.js" defer></script>
 </body>

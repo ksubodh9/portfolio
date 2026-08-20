@@ -104,6 +104,14 @@
     ["live", els.live],
   ];
 
+  /* Cold-start budget. A free-tier container that has gone to sleep can take
+     tens of seconds to boot, and the widget used to sit on a typing indicator
+     for all of it with no fetch timeout at all — so a sleeping backend looked
+     identical to a dead one, forever. */
+  const WAKE_NOTICE_MS = 3000;      // say "waking up" if nothing has come back
+  const REQUEST_TIMEOUT_MS = 45000; // then give up, rather than hang
+  const IDLE_STATUS = "grounded · cites its sources";
+
   const SUGGESTIONS = [
     "Tell me about his recent GenAI project",
     "What AI/ML work has he done?",
@@ -275,6 +283,7 @@
   }
   els.fab.addEventListener("pointerenter", () => {
     bootLauncherAvatar();
+    wakeBackend();
     if (avatar && avatar.react && avatarHost === els.fabStage) avatar.react("perk");
   });
   els.fab.addEventListener("focus", bootLauncherAvatar, { once: true });
@@ -552,8 +561,20 @@
     return { supported: true, start, stop, abort, isListening: () => listening };
   }
 
+  /* Fire-and-forget wake-up. Hovering the launcher or opening the panel is a
+     strong signal a question is coming, so start a sleeping container booting
+     while the visitor is still reading the greeting. Failure is irrelevant —
+     this only ever buys a head start. */
+  let wakePinged = false;
+  function wakeBackend() {
+    if (wakePinged || !API_BASE) return;
+    wakePinged = true;
+    fetch(`${API_BASE}/health`, { method: "GET", cache: "no-store" }).catch(() => {});
+  }
+
   /* ---------- open / close / expand ---------- */
   function open() {
+    wakeBackend();
     opened = true;
     els.panel.hidden = false;
     root.classList.add("asst-open");
@@ -953,14 +974,30 @@
       if (!(voice && voice.isSpeaking())) setState("idle");
     };
 
+    let wakeTimer = null;
+    let abortTimer = null;
+    const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+
     try {
       // the SSE request is open -> "thinking"
       setState("thinking");
+      // Tell the truth while a sleeping container boots. The `meta` frame
+      // overwrites this the moment the backend actually answers.
+      wakeTimer = setTimeout(() => {
+        els.statusText.textContent = "waking the backend up — first question takes a moment";
+      }, WAKE_NOTICE_MS);
+      if (ctrl) abortTimer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
+
       const resp = await fetch(`${API_BASE}/chat`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ message: text }),
+        signal: ctrl ? ctrl.signal : undefined,
       });
+      // headers are back, so the container is awake: the rest is streaming and
+      // must not be killed by the cold-start deadline
+      clearTimeout(abortTimer); abortTimer = null;
+      clearTimeout(wakeTimer); wakeTimer = null;
       if (resp.status === 429) {
         typing.remove();
         const e = await resp.json().catch(() => ({}));
@@ -1017,8 +1054,16 @@
     } catch (err) {
       typing.remove();
       answerEl.textContent =
-        "I couldn't reach the companion right now. Please try again in a moment.";
+        err && err.name === "AbortError"
+          ? "The companion is still starting up. Give it a few seconds and ask again."
+          : "I couldn't reach the companion right now. Please try again in a moment.";
+      // it answered once, so it is awake — let a retry re-ping if it sleeps again
+      wakePinged = false;
     } finally {
+      clearTimeout(wakeTimer);
+      clearTimeout(abortTimer);
+      if (els.statusText.textContent.indexOf("waking") === 0)
+        els.statusText.textContent = IDLE_STATUS;
       await drained();          // reveal whatever is still queued, even on error
       finish();
     }
